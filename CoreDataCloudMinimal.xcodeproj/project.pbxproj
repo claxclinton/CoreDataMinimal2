@@ -22,6 +22,7 @@
 		4BC0D26C19407D8B00E2142B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BC0D24B19407D8B00E2142B /* UIKit.framework */; };
 		4BC0D27419407D8B00E2142B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4BC0D27219407D8B00E2142B /* InfoPlist.strings */; };
 		4BC0D27619407D8B00E2142B /* CoreDataCloudMinimalTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BC0D27519407D8B00E2142B /* CoreDataCloudMinimalTests.m */; };
+		4BC0D2811940820900E2142B /* DCDataTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BC0D2801940820900E2142B /* DCDataTableViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +56,8 @@
 		4BC0D27119407D8B00E2142B /* CoreDataCloudMinimalTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CoreDataCloudMinimalTests-Info.plist"; sourceTree = "<group>"; };
 		4BC0D27319407D8B00E2142B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		4BC0D27519407D8B00E2142B /* CoreDataCloudMinimalTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CoreDataCloudMinimalTests.m; sourceTree = "<group>"; };
+		4BC0D27F1940820900E2142B /* DCDataTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCDataTableViewController.h; sourceTree = "<group>"; };
+		4BC0D2801940820900E2142B /* DCDataTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DCDataTableViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,6 +123,8 @@
 				4BC0D25C19407D8B00E2142B /* Main_iPad.storyboard */,
 				4BC0D25F19407D8B00E2142B /* DCViewController.h */,
 				4BC0D26019407D8B00E2142B /* DCViewController.m */,
+				4BC0D27F1940820900E2142B /* DCDataTableViewController.h */,
+				4BC0D2801940820900E2142B /* DCDataTableViewController.m */,
 				4BC0D26219407D8B00E2142B /* Images.xcassets */,
 				4BC0D24E19407D8B00E2142B /* Supporting Files */,
 			);
@@ -256,6 +261,7 @@
 			files = (
 				4BC0D25419407D8B00E2142B /* main.m in Sources */,
 				4BC0D26119407D8B00E2142B /* DCViewController.m in Sources */,
+				4BC0D2811940820900E2142B /* DCDataTableViewController.m in Sources */,
 				4BC0D25819407D8B00E2142B /* DCAppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

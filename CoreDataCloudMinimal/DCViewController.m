@@ -26,4 +26,24 @@
     // Dispose of any resources that can be recreated.
 }
 
+#pragma mark - User Actions
+- (IBAction)cloudAppAllowBarButtonItemActionWithSender:(id)sender
+{
+}
+
+- (IBAction)cloudSystemAllowBarButtonItemActionWithSender:(id)sender
+{
+}
+
+- (IBAction)rebuildFromCloudButtonActionWithSender:(id)sender
+{
+}
+
+- (IBAction)showStorageButtonActionWithSender:(id)sender
+{
+}
+
+- (IBAction)dataButtonWithAction:(id)sender
+{
+}
 @end
