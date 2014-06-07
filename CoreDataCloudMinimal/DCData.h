@@ -13,5 +13,4 @@
 @interface DCData : NSManagedObject
 
 @property (nonatomic, retain) NSString * value;
-
 @end

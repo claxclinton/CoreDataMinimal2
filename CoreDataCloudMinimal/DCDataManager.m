@@ -13,8 +13,16 @@
 
 @interface DCDataManager ()
 @property (weak, nonatomic) id <DCDataManagerDelegate> delegate;
-@property (strong, nonatomic) NSPersistentStore *persistentStore;
 @property (strong, nonatomic) DCUserDefaults *userDefaults;
+@end
+
+@interface DCDataManager ()
+@property (strong, nonatomic) NSPersistentStore *cloudPersistentStore;
+@property (strong, nonatomic) NSPersistentStore *localPersistentStore;
+@property (strong, nonatomic) NSPersistentStore *persistentStore;
+@property (strong, nonatomic) NSPersistentStoreCoordinator *cloudStoreCoordinator;
+@property (strong, nonatomic) NSPersistentStoreCoordinator *localStoreCoordinator;
+@property (strong, nonatomic) NSPersistentStoreCoordinator *storeCoordinator;
 @end
 
 @implementation DCDataManager
@@ -43,14 +51,19 @@
 #pragma mark - Public Methods
 - (void)removeStorage
 {
+    [self.delegate dataManagerDelegate:self accessDataAllowed:NO];
 }
 
 - (void)addLocalStorage
 {
+    [self.delegate dataManagerDelegate:self accessDataAllowed:YES];
+    [self.delegate dataManagerDelegate:self shouldReload:YES];
 }
 
 - (void)addCloudStorage
 {
+    [self.delegate dataManagerDelegate:self accessDataAllowed:YES];
+    [self.delegate dataManagerDelegate:self shouldReload:YES];
 }
 
 #pragma mark - Helper Methods
