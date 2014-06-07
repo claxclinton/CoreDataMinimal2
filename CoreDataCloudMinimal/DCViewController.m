@@ -27,7 +27,7 @@ typedef NS_ENUM(NSUInteger, DCStorageState) {
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.dataManager = [DCDataManager dataManagerWithDelegate:self];
+    self.dataManager = [DCDataManager dataManagerWithModelName:@"Model" delegate:self];
 }
 
 #pragma mark - Navigation

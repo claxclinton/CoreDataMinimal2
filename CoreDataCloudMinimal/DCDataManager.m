@@ -103,32 +103,23 @@ typedef NS_ENUM(NSUInteger, DCStorageState) {
                                   initWithManagedObjectModel:self.managedObjectModel];
     
     // Create coordinator with persistent store.
-    NSString *storeType;
-    NSURL *storeURL;
-    NSDictionary *options;
-    if (persistentStore) {
-        storeType = NSSQLiteStoreType;
-        NSString *sqliteFileName = [NSString stringWithFormat:@"%@.sqlite", self.modelName];
-        NSURL *applicationDocumentsDirectory = [self applicationDocumentsDirectory];
-        storeURL = [applicationDocumentsDirectory URLByAppendingPathComponent:sqliteFileName];
-        options = @{NSPersistentStoreUbiquitousContentNameKey: self.modelName,
-                    NSMigratePersistentStoresAutomaticallyOption: @(YES),
-                    NSInferMappingModelAutomaticallyOption: @(YES)};
-    } else {
-        storeType = NSInMemoryStoreType;
-        storeURL = nil;
-        options = nil;
-    }
+    NSString *sqliteFileName = [NSString stringWithFormat:@"%@.sqlite", self.modelName];
+    NSURL *applicationDocumentsDirectory = [self applicationDocumentsDirectory];
+    NSURL *storeURL = [applicationDocumentsDirectory URLByAppendingPathComponent:sqliteFileName];
+    NSDictionary *options = @{NSReadOnlyPersistentStoreOption: @(YES),
+                              NSPersistentStoreUbiquitousContentNameKey: self.modelName,
+                              NSMigratePersistentStoresAutomaticallyOption: @(YES),
+                              NSInferMappingModelAutomaticallyOption: @(YES)};
     
     // Create persistent store and add to persistent store coordinator.
-    NSError *error = nil;
+    NSError *addPersistentStoreError = nil;
     persistentStore = [persistentStoreCoordinator
-                       addPersistentStoreWithType:storeType
+                       addPersistentStoreWithType:NSSQLiteStoreType
                        configuration:nil URL:storeURL
-                       options:options error:&error];
+                       options:options error:&addPersistentStoreError];
     if (persistentStore == nil) {
         NSLog(@"When adding store to store coordinator, got error %@, with user info %@",
-              error, [error userInfo]);
+              addPersistentStoreError, [addPersistentStoreError userInfo]);
         abort();
     }
     
