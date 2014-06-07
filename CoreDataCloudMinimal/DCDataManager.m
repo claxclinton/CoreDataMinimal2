@@ -41,7 +41,17 @@
 }
 
 #pragma mark - Public Methods
+- (void)removeStorage
+{
+}
 
+- (void)addLocalStorage
+{
+}
+
+- (void)addCloudStorage
+{
+}
 
 #pragma mark - Helper Methods
 - (NSURL *)applicationDocumentsDirectory

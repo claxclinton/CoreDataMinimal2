@@ -19,6 +19,7 @@ typedef NS_ENUM(NSUInteger, DCStorageState) {
 @property (strong, nonatomic) IBOutlet UISegmentedControl *systemCloudAccessSegmentedControl;
 @property (strong, nonatomic) IBOutlet UISegmentedControl *appCloudAccessSegmentedControl;
 @property (strong, nonatomic) DCDataManager *dataManager;
+@property (strong, nonatomic) UIButton *selectedButton;
 @property (assign, nonatomic) DCStorageState storageState;
 @end
 
@@ -39,18 +40,21 @@ typedef NS_ENUM(NSUInteger, DCStorageState) {
 {
     NSLog(@"%s", __PRETTY_FUNCTION__);
     [self.dataManager removeStorage];
+    self.storageState = DCStorageStateNone;
 }
 
 - (IBAction)connectToLocalStorageButtonActionWithSender:(id)sender
 {
     NSLog(@"%s", __PRETTY_FUNCTION__);
     [self.dataManager addLocalStorage];
+    self.storageState = DCStorageStateLocal;
 }
 
 - (IBAction)connectToCloudStorageButtonActionWithSender:(id)sender
 {
     NSLog(@"%s", __PRETTY_FUNCTION__);
     [self.dataManager addCloudStorage];
+    self.storageState = DCStorageStateCloud;
 }
 
 - (IBAction)accessDataButtonActionWithSender:(id)sender
@@ -89,6 +93,6 @@ typedef NS_ENUM(NSUInteger, DCStorageState) {
 #pragma mark - Helper Methods
 - (void)setStorageState:(DCStorageState)storageState
 {
-    [self.systemCloudAccessSegmentedControl setSelectedSegmentIndex:storageState];
+    [self.appCloudAccessSegmentedControl setSelectedSegmentIndex:storageState];
 }
 @end
