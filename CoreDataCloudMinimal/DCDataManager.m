@@ -11,18 +11,28 @@
 #import "DCDataManager.h"
 #import "DCUserDefaults.h"
 
+typedef NS_ENUM(NSUInteger, DCStorageState) {
+    DCStorageStateNone = 0,
+    DCStorageStateLocal,
+    DCStorageStateCloud
+};
+
 @interface DCDataManager ()
 @property (weak, nonatomic) id <DCDataManagerDelegate> delegate;
 @property (strong, nonatomic) DCUserDefaults *userDefaults;
+@property (assign, nonatomic) DCStorageState storageState;
+@property (strong, nonatomic) NSPersistentStore *persistentStore;
+@property (strong, nonatomic) NSPersistentStoreCoordinator *storeCoordinator;
 @end
 
 @interface DCDataManager ()
-@property (strong, nonatomic) NSPersistentStore *cloudPersistentStore;
-@property (strong, nonatomic) NSPersistentStore *localPersistentStore;
-@property (strong, nonatomic) NSPersistentStore *persistentStore;
 @property (strong, nonatomic) NSPersistentStoreCoordinator *cloudStoreCoordinator;
+@property (strong, nonatomic) NSPersistentStore *cloudPersistentStore;
+@end
+
+@interface DCDataManager ()
+@property (strong, nonatomic) NSPersistentStore *localPersistentStore;
 @property (strong, nonatomic) NSPersistentStoreCoordinator *localStoreCoordinator;
-@property (strong, nonatomic) NSPersistentStoreCoordinator *storeCoordinator;
 @end
 
 @implementation DCDataManager
@@ -37,6 +47,7 @@
     self = [super init];
     if (self != nil) {
         self.delegate = delegate;
+        self.storageState = DCStorageStateNone;
         self.userDefaults = [DCUserDefaults userDefaultsWithPersistentStore:YES];
     }
     return self;
@@ -51,17 +62,20 @@
 #pragma mark - Public Methods
 - (void)removeStorage
 {
+    self.storageState = DCStorageStateNone;
     [self.delegate dataManagerDelegate:self accessDataAllowed:NO];
 }
 
 - (void)addLocalStorage
 {
+    self.storageState = DCStorageStateLocal;
     [self.delegate dataManagerDelegate:self accessDataAllowed:YES];
     [self.delegate dataManagerDelegate:self shouldReload:YES];
 }
 
 - (void)addCloudStorage
 {
+    self.storageState = DCStorageStateCloud;
     [self.delegate dataManagerDelegate:self accessDataAllowed:YES];
     [self.delegate dataManagerDelegate:self shouldReload:YES];
 }
