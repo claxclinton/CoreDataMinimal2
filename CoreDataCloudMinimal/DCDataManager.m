@@ -18,6 +18,7 @@ typedef NS_ENUM(NSUInteger, DCStorageState) {
 };
 
 @interface DCDataManager ()
+@property (copy, nonatomic) NSString *modelName;
 @property (weak, nonatomic) id <DCDataManagerDelegate> delegate;
 @property (strong, nonatomic) DCUserDefaults *userDefaults;
 @property (assign, nonatomic) DCStorageState storageState;
@@ -38,15 +39,18 @@ typedef NS_ENUM(NSUInteger, DCStorageState) {
 
 @implementation DCDataManager
 #pragma mark - Create And Init
-+ (instancetype)dataManagerWithDelegate:(id <DCDataManagerDelegate>)delegate
++ (instancetype)dataManagerWithModelName:(NSString *)modelName
+                                delegate:(id <DCDataManagerDelegate>)delegate
 {
-    return [[DCDataManager alloc] initWithDelegate:delegate];
+    return [[DCDataManager alloc] initWithModelName:modelName delegate:delegate];
 }
 
-- (instancetype)initWithDelegate:(id <DCDataManagerDelegate>)delegate
+- (instancetype)initWithModelName:(NSString *)modelName
+                         delegate:(id <DCDataManagerDelegate>)delegate
 {
     self = [super init];
     if (self != nil) {
+        self.modelName = modelName;
         self.delegate = delegate;
         self.storageState = DCStorageStateNone;
         self.userDefaults = [DCUserDefaults userDefaultsWithPersistentStore:YES];
@@ -87,9 +91,50 @@ typedef NS_ENUM(NSUInteger, DCStorageState) {
 }
 
 #pragma mark - Persistent Store Coordinators
-- (void)localPersistentStoreCoordinator:(NSPersistentStoreCoordinator **)storeCoordinator
-                        persistentStore:(NSPersistentStore **)persistentStore
+- (void)localPersistentStoreCoordinator:(NSPersistentStoreCoordinator **)persistentStoreCoordinatorOutput
+                        persistentStore:(NSPersistentStore **)persistentStoreOutput
 {
+    // Result variables
+    NSPersistentStoreCoordinator *persistentStoreCoordinator;
+    NSPersistentStore *persistentStore;
+    
+    // Create coordinator with managed object model.
+    persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc]
+                                  initWithManagedObjectModel:self.managedObjectModel];
+    
+    // Create coordinator with persistent store.
+    NSString *storeType;
+    NSURL *storeURL;
+    NSDictionary *options;
+    if (persistentStore) {
+        storeType = NSSQLiteStoreType;
+        NSString *sqliteFileName = [NSString stringWithFormat:@"%@.sqlite", self.modelName];
+        NSURL *applicationDocumentsDirectory = [self applicationDocumentsDirectory];
+        storeURL = [applicationDocumentsDirectory URLByAppendingPathComponent:sqliteFileName];
+        options = @{NSPersistentStoreUbiquitousContentNameKey: self.modelName,
+                    NSMigratePersistentStoresAutomaticallyOption: @(YES),
+                    NSInferMappingModelAutomaticallyOption: @(YES)};
+    } else {
+        storeType = NSInMemoryStoreType;
+        storeURL = nil;
+        options = nil;
+    }
+    
+    // Create persistent store and add to persistent store coordinator.
+    NSError *error = nil;
+    persistentStore = [persistentStoreCoordinator
+                       addPersistentStoreWithType:storeType
+                       configuration:nil URL:storeURL
+                       options:options error:&error];
+    if (persistentStore == nil) {
+        NSLog(@"When adding store to store coordinator, got error %@, with user info %@",
+              error, [error userInfo]);
+        abort();
+    }
+    
+    // Output variables
+    *persistentStoreCoordinatorOutput = persistentStoreCoordinator;
+    *persistentStoreOutput = persistentStore;
 }
 
 #pragma mark - Managed Object Model
