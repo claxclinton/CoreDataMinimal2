@@ -58,7 +58,7 @@
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <action selector="dataButtonWithAction:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="QPM-n8-AGR"/>
+                                            <action selector="disconnectButtonActionWithSender:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="k3t-lk-uQa"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GJS-FM-zbq">
@@ -69,7 +69,7 @@
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <action selector="dataButtonWithAction:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="655-vg-phD"/>
+                                            <action selector="connectToLocalStorageButtonActionWithSender:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="ajl-m7-D4l"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HJA-W6-oQw">
@@ -80,7 +80,7 @@
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <action selector="dataButtonWithAction:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="Prb-Se-Qh0"/>
+                                            <action selector="connectToCloudStorageButtonActionWithSender:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="21c-SU-Hah"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -98,7 +98,7 @@
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <action selector="dataButtonWithAction:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="u7m-Nx-5QB"/>
+                                            <action selector="accessDataButtonActionWithSender:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="ULr-ZY-iG2"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -122,6 +122,8 @@
                         <color key="backgroundColor" red="0.3247638927" green="0.55863083840000005" blue="0.88546694020000005" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
                     <connections>
+                        <outlet property="appCloudAccessSegmentedControl" destination="NEL-ia-8qe" id="AkV-o2-qmf"/>
+                        <outlet property="systemCloudAccessSegmentedControl" destination="Yzf-2t-p1J" id="9aR-O5-uC3"/>
                         <segue destination="8GM-rl-ZGp" kind="modal" identifier="accessData" id="dK7-CX-2kp"/>
                     </connections>
                 </viewController>
@@ -165,7 +167,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <segue destination="Z1s-7j-zg0" kind="unwind" identifier="unwind" unwindAction="unwindWithStoryboardSegue:" id="fYS-FH-syS"/>
+                        <segue destination="Z1s-7j-zg0" kind="unwind" identifier="unwind" unwindAction="unwindActionWithStoryboardSegue:" id="M55-ka-s73"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lDx-aV-mQc" userLabel="First Responder" sceneMemberID="firstResponder"/>

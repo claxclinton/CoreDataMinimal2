@@ -9,8 +9,8 @@
 #import "DCViewController.h"
 
 @interface DCViewController ()
-@property (strong, nonatomic) UISegmentedControl *systemCloudAccessSegmentedControl;
-@property (strong, nonatomic) UISegmentedControl *appCloudAccessSegmentedControl;
+@property (strong, nonatomic) IBOutlet UISegmentedControl *systemCloudAccessSegmentedControl;
+@property (strong, nonatomic) IBOutlet UISegmentedControl *appCloudAccessSegmentedControl;
 @end
 
 @implementation DCViewController
@@ -28,4 +28,28 @@
 }
 
 #pragma mark - Navigation
+- (IBAction)unwindActionWithStoryboardSegue:(UIStoryboardSegue *)storyboardSegue
+{
+}
+
+#pragma mark - User Actions
+- (IBAction)disconnectButtonActionWithSender:(id)sender
+{
+    
+}
+
+- (IBAction)connectToLocalStorageButtonActionWithSender:(id)sender
+{
+    
+}
+
+- (IBAction)connectToCloudStorageButtonActionWithSender:(id)sender
+{
+    
+}
+
+- (IBAction)accessDataButtonActionWithSender:(id)sender
+{
+    
+}
 @end
