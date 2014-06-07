@@ -26,5 +26,7 @@
 @property (strong, readonly, nonatomic) id <NSObject, NSCopying, NSCoding> ubiquityIdentityToken;
 
 + (instancetype)dataManagerWithDelegate:(id <DCDataManagerDelegate>)delegate;
-
+- (void)removeStorage;
+- (void)addLocalStorage;
+- (void)addCloudStorage;
 @end
