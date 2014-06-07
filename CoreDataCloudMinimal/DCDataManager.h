@@ -20,5 +20,5 @@
 @end
 
 @interface DCDataManager : NSObject
-+ (instancetype)dataManager;
++ (instancetype)dataManagerWithDelegate:(id <DCDataManagerDelegate>)delegate;
 @end

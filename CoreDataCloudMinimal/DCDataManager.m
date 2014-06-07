@@ -11,29 +11,27 @@
 #import "DCDataManager.h"
 
 @interface DCDataManager ()
+@property (weak, nonatomic) id <DCDataManagerDelegate> delegate;
 @property (strong, nonatomic) NSPersistentStore *persistentStore;
 @end
 
 @implementation DCDataManager
 #pragma mark - Create And Init
-+ (instancetype)dataManager
++ (instancetype)dataManagerWithDelegate:(id <DCDataManagerDelegate>)delegate
 {
-    return [[DCDataManager alloc] init];
+    return [[DCDataManager alloc] initWithDelegate:delegate];
 }
 
-- (instancetype)init
+- (instancetype)initWithDelegate:(id <DCDataManagerDelegate>)delegate
 {
     self = [super init];
     if (self != nil) {
+        self.delegate = delegate;
     }
     return self;
 }
 
 #pragma mark - Core Data
-- (void)initPersistensUsingCloud:(BOOL)usingCloud
-{
-    
-}
 
 #pragma mark - Helper Methods
 - (NSURL *)applicationDocumentsDirectory
