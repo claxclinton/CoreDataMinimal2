@@ -9,9 +9,16 @@
 #import "DCViewController.h"
 #import "DCDataManager.h"
 
+typedef NS_ENUM(NSUInteger, DCStorageState) {
+    DCStorageStateDisconnected,
+    DCStorageStateLocal,
+    DCStorageStateCloud
+};
+
 @interface DCViewController () <DCDataManagerDelegate>
 @property (strong, nonatomic) IBOutlet UISegmentedControl *systemCloudAccessSegmentedControl;
 @property (strong, nonatomic) IBOutlet UISegmentedControl *appCloudAccessSegmentedControl;
+@property (assign, nonatomic) DCStorageState storageState;
 @end
 
 @implementation DCViewController
@@ -28,14 +35,17 @@
 #pragma mark - User Actions
 - (IBAction)disconnectButtonActionWithSender:(id)sender
 {
+    NSLog(@"%s", __PRETTY_FUNCTION__);
 }
 
 - (IBAction)connectToLocalStorageButtonActionWithSender:(id)sender
 {
+    NSLog(@"%s", __PRETTY_FUNCTION__);
 }
 
 - (IBAction)connectToCloudStorageButtonActionWithSender:(id)sender
 {
+    NSLog(@"%s", __PRETTY_FUNCTION__);
 }
 
 - (IBAction)accessDataButtonActionWithSender:(id)sender
@@ -67,5 +77,9 @@
             toUbiquityToken:(id)toToken
 {
     NSLog(@"%s from:\"%@\" to:\"%@\"", __PRETTY_FUNCTION__, fromToken, toToken);
+    NSInteger selectedSegmentIndex = (toToken == nil) ? 0 : 1;
+    [self.systemCloudAccessSegmentedControl setSelectedSegmentIndex:selectedSegmentIndex];
 }
+
+#pragma mark - Helper Methods
 @end
