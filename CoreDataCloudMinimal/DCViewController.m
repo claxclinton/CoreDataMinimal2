@@ -10,7 +10,7 @@
 #import "DCDataManager.h"
 
 typedef NS_ENUM(NSUInteger, DCStorageState) {
-    DCStorageStateDisconnected,
+    DCStorageStateNone = 0,
     DCStorageStateLocal,
     DCStorageStateCloud
 };
@@ -82,4 +82,8 @@ typedef NS_ENUM(NSUInteger, DCStorageState) {
 }
 
 #pragma mark - Helper Methods
+    - (void)setStorageState:(DCStorageState)storageState
+{
+    [self.systemCloudAccessSegmentedControl setSelectedSegmentIndex:storageState];
+}
 @end

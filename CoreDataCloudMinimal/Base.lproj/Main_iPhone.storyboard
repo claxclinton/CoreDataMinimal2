@@ -36,11 +36,12 @@
                                         </segments>
                                     </segmentedControl>
                                     <segmentedControl opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="NEL-ia-8qe">
-                                        <rect key="frame" x="36" y="56" width="209" height="29"/>
+                                        <rect key="frame" x="36" y="56" width="207" height="29"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <segments>
-                                            <segment title="Local Storage"/>
-                                            <segment title="iCloud Storage"/>
+                                            <segment title="None"/>
+                                            <segment title="Local"/>
+                                            <segment title="iCloud"/>
                                         </segments>
                                     </segmentedControl>
                                 </subviews>
