@@ -47,25 +47,25 @@
 - (void)dataManagerDelegate:(DCDataManager *)dataManager
          shouldLockInterace:(BOOL)lockInterface
 {
-    
+    NSLog(@"%s lockInterface:%@", __PRETTY_FUNCTION__, (lockInterface) ? @"YES" : @"NO");
 }
 
 - (void)dataManagerDelegate:(DCDataManager *)dataManager
           accessDataAllowed:(BOOL)accessDataAllowed
 {
-    
+    NSLog(@"%s accessDataAllowed:%@", __PRETTY_FUNCTION__, (accessDataAllowed) ? @"YES" : @"NO");
 }
 
 - (void)dataManagerDelegate:(DCDataManager *)dataManager
                shouldReload:(BOOL)shouldReload
 {
-    
+    NSLog(@"%s shouldReload:%@", __PRETTY_FUNCTION__, (shouldReload) ? @"YES" : @"NO");
 }
 
 - (void)dataManagerDelegate:(DCDataManager *)dataManager
  didChangeUbiquityTokenFrom:(id)fromToken
             toUbiquityToken:(id)toToken
 {
-    
+    NSLog(@"%s from:\"%@\" to:\"%@\"", __PRETTY_FUNCTION__, fromToken, toToken);
 }
 @end
