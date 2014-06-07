@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4B4A90151942CEF7005ADA9B /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B4A90171942CEF7005ADA9B /* Main_iPhone.storyboard */; };
 		4BC0D24819407D8B00E2142B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BC0D24719407D8B00E2142B /* Foundation.framework */; };
 		4BC0D24A19407D8B00E2142B /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BC0D24919407D8B00E2142B /* CoreGraphics.framework */; };
 		4BC0D24C19407D8B00E2142B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BC0D24B19407D8B00E2142B /* UIKit.framework */; };
 		4BC0D25219407D8B00E2142B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4BC0D25019407D8B00E2142B /* InfoPlist.strings */; };
 		4BC0D25419407D8B00E2142B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BC0D25319407D8B00E2142B /* main.m */; };
 		4BC0D25819407D8B00E2142B /* DCAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BC0D25719407D8B00E2142B /* DCAppDelegate.m */; };
-		4BC0D25B19407D8B00E2142B /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4BC0D25919407D8B00E2142B /* Main_iPhone.storyboard */; };
 		4BC0D25E19407D8B00E2142B /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4BC0D25C19407D8B00E2142B /* Main_iPad.storyboard */; };
 		4BC0D26119407D8B00E2142B /* DCViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BC0D26019407D8B00E2142B /* DCViewController.m */; };
 		4BC0D26319407D8B00E2142B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4BC0D26219407D8B00E2142B /* Images.xcassets */; };
@@ -36,6 +36,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4B4A90161942CEF7005ADA9B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPhone.storyboard; sourceTree = "<group>"; };
 		4BC0D24419407D8B00E2142B /* CoreDataCloudMinimal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoreDataCloudMinimal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BC0D24719407D8B00E2142B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		4BC0D24919407D8B00E2142B /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -46,7 +47,6 @@
 		4BC0D25519407D8B00E2142B /* CoreDataCloudMinimal-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CoreDataCloudMinimal-Prefix.pch"; sourceTree = "<group>"; };
 		4BC0D25619407D8B00E2142B /* DCAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DCAppDelegate.h; sourceTree = "<group>"; };
 		4BC0D25719407D8B00E2142B /* DCAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DCAppDelegate.m; sourceTree = "<group>"; };
-		4BC0D25A19407D8B00E2142B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPhone.storyboard; sourceTree = "<group>"; };
 		4BC0D25D19407D8B00E2142B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPad.storyboard; sourceTree = "<group>"; };
 		4BC0D25F19407D8B00E2142B /* DCViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DCViewController.h; sourceTree = "<group>"; };
 		4BC0D26019407D8B00E2142B /* DCViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DCViewController.m; sourceTree = "<group>"; };
@@ -119,8 +119,8 @@
 			children = (
 				4BC0D25619407D8B00E2142B /* DCAppDelegate.h */,
 				4BC0D25719407D8B00E2142B /* DCAppDelegate.m */,
-				4BC0D25919407D8B00E2142B /* Main_iPhone.storyboard */,
 				4BC0D25C19407D8B00E2142B /* Main_iPad.storyboard */,
+				4B4A90171942CEF7005ADA9B /* Main_iPhone.storyboard */,
 				4BC0D25F19407D8B00E2142B /* DCViewController.h */,
 				4BC0D26019407D8B00E2142B /* DCViewController.m */,
 				4BC0D27F1940820900E2142B /* DCDataTableViewController.h */,
@@ -237,9 +237,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B4A90151942CEF7005ADA9B /* Main_iPhone.storyboard in Resources */,
 				4BC0D25E19407D8B00E2142B /* Main_iPad.storyboard in Resources */,
 				4BC0D26319407D8B00E2142B /* Images.xcassets in Resources */,
-				4BC0D25B19407D8B00E2142B /* Main_iPhone.storyboard in Resources */,
 				4BC0D25219407D8B00E2142B /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -285,20 +285,20 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		4B4A90171942CEF7005ADA9B /* Main_iPhone.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4B4A90161942CEF7005ADA9B /* Base */,
+			);
+			name = Main_iPhone.storyboard;
+			sourceTree = "<group>";
+		};
 		4BC0D25019407D8B00E2142B /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
 				4BC0D25119407D8B00E2142B /* en */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		4BC0D25919407D8B00E2142B /* Main_iPhone.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				4BC0D25A19407D8B00E2142B /* Base */,
-			);
-			name = Main_iPhone.storyboard;
 			sourceTree = "<group>";
 		};
 		4BC0D25C19407D8B00E2142B /* Main_iPad.storyboard */ = {
@@ -401,6 +401,7 @@
 				GCC_PREFIX_HEADER = "CoreDataCloudMinimal/CoreDataCloudMinimal-Prefix.pch";
 				INFOPLIST_FILE = "CoreDataCloudMinimal/CoreDataCloudMinimal-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -414,6 +415,7 @@
 				GCC_PREFIX_HEADER = "CoreDataCloudMinimal/CoreDataCloudMinimal-Prefix.pch";
 				INFOPLIST_FILE = "CoreDataCloudMinimal/CoreDataCloudMinimal-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -477,6 +479,7 @@
 				4BC0D27B19407D8B00E2142B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		4BC0D27C19407D8B00E2142B /* Build configuration list for PBXNativeTarget "CoreDataCloudMinimalTests" */ = {
 			isa = XCConfigurationList;
@@ -485,6 +488,7 @@
 				4BC0D27E19407D8B00E2142B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

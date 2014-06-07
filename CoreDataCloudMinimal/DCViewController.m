@@ -9,7 +9,7 @@
 #import "DCViewController.h"
 
 @interface DCViewController ()
-
+@property (strong, nonatomic) IBOutlet UITextView *storageTextView;
 @end
 
 @implementation DCViewController
@@ -24,6 +24,11 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+#pragma mark - Navigation
+- (IBAction)unwindWithStoryboardSegue:(UIStoryboardSegue *)storyboardSegue
+{
 }
 
 #pragma mark - User Actions
@@ -45,5 +50,6 @@
 
 - (IBAction)dataButtonWithAction:(id)sender
 {
+    [self performSegueWithIdentifier:@"data" sender:self];
 }
 @end
