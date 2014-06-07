@@ -13,5 +13,5 @@
 @property (strong, nonatomic) NSString *questionnaireIdentity;
 @property (readonly, nonatomic) BOOL persistentStore;
 
-- (instancetype)initWithPersistentStore:(BOOL)persistentStore;
++ (instancetype)userDefaultsWithPersistentStore:(BOOL)persistentStore;
 @end

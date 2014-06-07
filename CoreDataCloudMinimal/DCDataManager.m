@@ -9,10 +9,12 @@
 @import CoreData;
 
 #import "DCDataManager.h"
+#import "DCUserDefaults.h"
 
 @interface DCDataManager ()
 @property (weak, nonatomic) id <DCDataManagerDelegate> delegate;
 @property (strong, nonatomic) NSPersistentStore *persistentStore;
+@property (strong, nonatomic) DCUserDefaults *userDefaults;
 @end
 
 @implementation DCDataManager
@@ -27,11 +29,19 @@
     self = [super init];
     if (self != nil) {
         self.delegate = delegate;
+        self.userDefaults = [DCUserDefaults userDefaultsWithPersistentStore:YES];
     }
     return self;
 }
 
-#pragma mark - Core Data
+#pragma mark - Properties
+- (id <NSObject, NSCopying, NSCoding>)ubiquityIdentityToken
+{
+    return self.userDefaults.storedAccessIdentity;
+}
+
+#pragma mark - Public Methods
+
 
 #pragma mark - Helper Methods
 - (NSURL *)applicationDocumentsDirectory

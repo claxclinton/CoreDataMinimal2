@@ -7,14 +7,14 @@
 //
 
 #import "DCViewController.h"
+#import "DCDataManager.h"
 
-@interface DCViewController ()
+@interface DCViewController () <DCDataManagerDelegate>
 @property (strong, nonatomic) IBOutlet UISegmentedControl *systemCloudAccessSegmentedControl;
 @property (strong, nonatomic) IBOutlet UISegmentedControl *appCloudAccessSegmentedControl;
 @end
 
 @implementation DCViewController
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -41,5 +41,31 @@
 - (IBAction)accessDataButtonActionWithSender:(id)sender
 {
     [self performSegueWithIdentifier:@"accessData" sender:self];
+}
+
+#pragma mark - Data Manager
+- (void)dataManagerDelegate:(DCDataManager *)dataManager
+         shouldLockInterace:(BOOL)lockInterface
+{
+    
+}
+
+- (void)dataManagerDelegate:(DCDataManager *)dataManager
+          accessDataAllowed:(BOOL)accessDataAllowed
+{
+    
+}
+
+- (void)dataManagerDelegate:(DCDataManager *)dataManager
+               shouldReload:(BOOL)shouldReload
+{
+    
+}
+
+- (void)dataManagerDelegate:(DCDataManager *)dataManager
+ didChangeUbiquityTokenFrom:(id)fromToken
+            toUbiquityToken:(id)toToken
+{
+    
 }
 @end

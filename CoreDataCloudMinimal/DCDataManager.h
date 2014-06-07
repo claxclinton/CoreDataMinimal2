@@ -17,8 +17,13 @@
           accessDataAllowed:(BOOL)accessDataAllowed;
 - (void)dataManagerDelegate:(DCDataManager *)dataManager
                shouldReload:(BOOL)shouldReload;
+- (void)dataManagerDelegate:(DCDataManager *)dataManager
+ didChangeUbiquityTokenFrom:(id)fromToken
+            toUbiquityToken:(id)toToken;
 @end
 
 @interface DCDataManager : NSObject
+@property (strong, readonly, nonatomic) id <NSObject, NSCopying, NSCoding> ubiquityIdentityToken;
+
 + (instancetype)dataManagerWithDelegate:(id <DCDataManagerDelegate>)delegate;
 @end

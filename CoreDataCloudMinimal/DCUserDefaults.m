@@ -22,6 +22,11 @@ NSString * const DCQuestionnaireIdentityKey = @"com.lillysoft.DailyCheck.questio
 @synthesize persistentStore = _persistentStore;
 
 #pragma mark - Create And Init
++ (instancetype)userDefaultsWithPersistentStore:(BOOL)persistentStore
+{
+    return [[DCUserDefaults alloc] initWithPersistentStore:persistentStore];
+}
+
 - (instancetype)initWithPersistentStore:(BOOL)persistentStore
 {
     self = [super init];
