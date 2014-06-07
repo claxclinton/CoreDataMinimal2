@@ -8,6 +8,17 @@
 
 #import <Foundation/Foundation.h>
 
+@class DCDataManager;
+
+@protocol DCDataManagerDelegate <NSObject>
+- (void)dataManagerDelegate:(DCDataManager *)dataManager
+         shouldLockInterace:(BOOL)lockInterface;
+- (void)dataManagerDelegate:(DCDataManager *)dataManager
+          accessDataAllowed:(BOOL)accessDataAllowed;
+- (void)dataManagerDelegate:(DCDataManager *)dataManager
+               shouldReload:(BOOL)shouldReload;
+@end
+
 @interface DCDataManager : NSObject
 + (instancetype)dataManager;
 @end

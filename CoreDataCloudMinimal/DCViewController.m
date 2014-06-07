@@ -18,13 +18,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 #pragma mark - Navigation
@@ -35,21 +28,18 @@
 #pragma mark - User Actions
 - (IBAction)disconnectButtonActionWithSender:(id)sender
 {
-    
 }
 
 - (IBAction)connectToLocalStorageButtonActionWithSender:(id)sender
 {
-    
 }
 
 - (IBAction)connectToCloudStorageButtonActionWithSender:(id)sender
 {
-    
 }
 
 - (IBAction)accessDataButtonActionWithSender:(id)sender
 {
-    
+    [self performSegueWithIdentifier:@"accessData" sender:self];
 }
 @end
