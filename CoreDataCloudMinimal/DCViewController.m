@@ -9,7 +9,8 @@
 #import "DCViewController.h"
 
 @interface DCViewController ()
-@property (strong, nonatomic) IBOutlet UITextView *storageTextView;
+@property (strong, nonatomic) UISegmentedControl *systemCloudAccessSegmentedControl;
+@property (strong, nonatomic) UISegmentedControl *appCloudAccessSegmentedControl;
 @end
 
 @implementation DCViewController
@@ -27,29 +28,4 @@
 }
 
 #pragma mark - Navigation
-- (IBAction)unwindWithStoryboardSegue:(UIStoryboardSegue *)storyboardSegue
-{
-}
-
-#pragma mark - User Actions
-- (IBAction)cloudAppAllowBarButtonItemActionWithSender:(id)sender
-{
-}
-
-- (IBAction)cloudSystemAllowBarButtonItemActionWithSender:(id)sender
-{
-}
-
-- (IBAction)rebuildFromCloudButtonActionWithSender:(id)sender
-{
-}
-
-- (IBAction)showStorageButtonActionWithSender:(id)sender
-{
-}
-
-- (IBAction)dataButtonWithAction:(id)sender
-{
-    [self performSegueWithIdentifier:@"data" sender:self];
-}
 @end
