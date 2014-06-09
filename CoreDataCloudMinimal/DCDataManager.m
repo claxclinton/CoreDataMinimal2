@@ -13,6 +13,10 @@
 #import "DCUserDefaults.h"
 #import "DCData.h"
 
+static NSString * const DCUbiquitousContentName = @"CoreDataCloudMinimal";
+static NSString * const DCStoreNameLocal = @"Data-Local.sqlite";
+static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
+
 @interface DCDataManager ()
 @property (copy, nonatomic) NSString *modelName;
 @property (weak, nonatomic) id <DCDataManagerDelegate> delegate;
@@ -57,6 +61,7 @@
         self.sharedServices = [DCSharedServices sharedServices];
         self.userDefaults = self.sharedServices.userDefaults;
         [self registerForCloudNotifications];
+        [self updateStoredAccessIdentity];
     }
     return self;
 }
@@ -91,11 +96,16 @@
 
 - (void)addCloudStorage
 {
-//    !self.userDefaults.appCloudAccessAllowed
-//    self.userDefaults.storedAccessIdentity
-    self.persistentStorageType = DCPersistentStorageTypeCloud;
-    [self.delegate dataManagerDelegate:self accessDataAllowed:YES];
-    [self.delegate dataManagerDelegate:self shouldReload:YES];
+    NSAssert(self.userDefaults.appCloudAccessAllowed, @"The app must be configured to use iCloud.");
+    if (self.persistentStorageType != DCPersistentStorageTypeCloud) {
+        [self.delegate dataManagerDelegate:self accessDataAllowed:NO];
+        [self.managedObjectContext reset];
+        [self setupCloudPersistentStore];
+        self.managedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator;
+        self.persistentStorageType = DCPersistentStorageTypeCloud;
+        [self.delegate dataManagerDelegate:self accessDataAllowed:YES];
+        [self.delegate dataManagerDelegate:self shouldReload:YES];
+    }
 }
 
 - (DCData *)insertDataItem
@@ -198,11 +208,7 @@
 
 - (void)ubiquityIdentityDidChangeWithNotification:(NSNotification *)notification
 {
-    id previousUbiquityIdentity = self.userDefaults.storedAccessIdentity;
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    id nextUbiquityIdentity = [fileManager ubiquityIdentityToken];
-    [self.delegate dataManagerDelegate:self didChangeUbiquityTokenFrom:previousUbiquityIdentity toUbiquityToken:nextUbiquityIdentity];
-    self.userDefaults.storedAccessIdentity = nextUbiquityIdentity;
+    [self updateStoredAccessIdentity];
 }
 
 #pragma mark - Managed Object Context
@@ -231,7 +237,7 @@
     NSDictionary *options = [self localPersistentStoreCoordinatorOptions];
     
     // Setup local persistent store URL.
-    NSURL *storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"Data-Local.sqlite"];
+    NSURL *storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:DCStoreNameLocal];
     
     // Create persistent store and add to persistent store coordinator.
     NSError *addPersistentStoreError = nil;
@@ -239,7 +245,40 @@
                        addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL
                        options:options error:&addPersistentStoreError];
     if (persistentStore == nil) {
-        NSLog(@"When adding store to store coordinator, got error %@, with user info %@",
+        NSLog(@"When adding store to local persistent store coordinator, got error %@, with user info %@",
+              addPersistentStoreError, [addPersistentStoreError userInfo]);
+        abort();
+    }
+    
+    // Output variables
+    *persistentStoreCoordinatorOutput = persistentStoreCoordinator;
+    *persistentStoreOutput = persistentStore;
+}
+
+- (void)cloudPersistentStoreCoordinator:(NSPersistentStoreCoordinator **)persistentStoreCoordinatorOutput
+                        persistentStore:(NSPersistentStore **)persistentStoreOutput
+{
+    // Result variables
+    NSPersistentStoreCoordinator *persistentStoreCoordinator;
+    NSPersistentStore *persistentStore;
+    
+    // Create coordinator with managed object model.
+    persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc]
+                                  initWithManagedObjectModel:self.managedObjectModel];
+    
+    // Create coordinator with persistent store.
+    NSDictionary *options = [self cloudPersistentStoreCoordinatorOptions];
+    
+    // Setup local persistent store URL.
+    NSURL *storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:DCStoreNameCloud];
+    
+    // Create persistent store and add to persistent store coordinator.
+    NSError *addPersistentStoreError = nil;
+    persistentStore = [persistentStoreCoordinator
+                       addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL
+                       options:options error:&addPersistentStoreError];
+    if (persistentStore == nil) {
+        NSLog(@"When adding store to cloud persistent store coordinator, got error %@, with user info %@",
               addPersistentStoreError, [addPersistentStoreError userInfo]);
         abort();
     }
@@ -307,11 +346,21 @@ persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordi
 #pragma mark Cloud Persistent Store
 - (NSDictionary *)cloudPersistentStoreCoordinatorOptions
 {
-    NSDictionary *options = @{NSReadOnlyPersistentStoreOption: @(YES),
-                              NSPersistentStoreUbiquitousContentNameKey: self.modelName,
+    NSDictionary *options = @{NSPersistentStoreUbiquitousContentNameKey: DCUbiquitousContentName,
                               NSMigratePersistentStoresAutomaticallyOption: @(YES),
                               NSInferMappingModelAutomaticallyOption: @(YES)};
     return options;
+}
+
+- (void)setupCloudPersistentStore
+{
+    NSPersistentStoreCoordinator *persistentStoreCoordinator;
+    NSPersistentStore *persistentStore;
+    [self cloudPersistentStoreCoordinator:&persistentStoreCoordinator persistentStore:&persistentStore];
+    self.cloudPersistentStoreCoordinator = persistentStoreCoordinator;
+    self.cloudPersistentStore = persistentStore;
+    [self setPersistentStore:persistentStore persistentStoreCoordinator:persistentStoreCoordinator];
+    NSLog(@"Cloud persistent store: %@", persistentStore.URL);
 }
 
 #pragma mark - Internal Helper Methods
@@ -338,5 +387,14 @@ persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordi
     self.cloudPersistentStoreCoordinator = nil;
     self.persistentStore = nil;
     self.persistentStoreCoordinator = nil;
+}
+
+- (void)updateStoredAccessIdentity
+{
+    id previousUbiquityIdentity = self.userDefaults.storedAccessIdentity;
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    id nextUbiquityIdentity = [fileManager ubiquityIdentityToken];
+    [self.delegate dataManagerDelegate:self didChangeUbiquityTokenFrom:previousUbiquityIdentity toUbiquityToken:nextUbiquityIdentity];
+    self.userDefaults.storedAccessIdentity = nextUbiquityIdentity;    
 }
 @end

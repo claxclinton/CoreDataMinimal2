@@ -100,14 +100,7 @@
 
 - (void)addCloudStorage
 {
-    if (self.userDefaults.storedAccessIdentity == nil) {
-        self.persistentStorageType = self.persistentStorageType;
-        UIAlertView *alertView = [[UIAlertView alloc]
-                                  initWithTitle:@"Missing System iCloud Permissions"
-                                  message:@"Allow the app to access iCloud in System Settings."
-                                  delegate:nil cancelButtonTitle:@"Done" otherButtonTitles:nil];
-        [alertView show];
-    } else if (!self.userDefaults.appCloudAccessAllowed) {
+    if (!self.userDefaults.appCloudAccessAllowed) {
         self.persistentStorageType = self.persistentStorageType;
         UIAlertView *alertView = [[UIAlertView alloc]
                                   initWithTitle:@"Missing App iCloud Permissions"
@@ -115,6 +108,15 @@
                                   delegate:nil cancelButtonTitle:@"Done" otherButtonTitles:nil];
         [alertView show];
     } else {
+        if (self.userDefaults.storedAccessIdentity == nil) {
+            UIAlertView *alertView = [[UIAlertView alloc]
+                                      initWithTitle:@"App Misses System Access To iCloud"
+                                      message:@"Since the app misses system access to iCloud, your changes "
+                                      "will not be shared to other devices until system access is available. "
+                                      "Check that you are logged in and app has access to \"Documents & Data\"."
+                                      delegate:nil cancelButtonTitle:@"Done" otherButtonTitles:nil];
+            [alertView show];
+        }
         [self.dataManager addCloudStorage];
     }
     
