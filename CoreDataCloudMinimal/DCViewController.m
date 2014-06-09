@@ -1,4 +1,4 @@
-//
+    //
 //  DCViewController.m
 //  CoreDataCloudMinimal
 //
@@ -14,7 +14,7 @@
 
 @interface DCViewController () <DCDataManagerDelegate>
 @property (strong, nonatomic) IBOutlet UISegmentedControl *systemCloudAccessSegmentedControl;
-@property (strong, nonatomic) IBOutlet UISegmentedControl *appCloudAccessSegmentedControl;
+@property (strong, nonatomic) IBOutlet UISegmentedControl *storageBackendSegmentedControl;
 @property (strong, nonatomic) IBOutlet UISegmentedControl *persistentStoreTypeSegmentedControl;
 @property (strong, nonatomic) DCDataManager *dataManager;
 @property (strong, nonatomic) UIButton *selectedButton;
@@ -35,7 +35,7 @@
                                               @(DCPersistentStorageTypeCloud): @"Cloud Persistent Store"};
     self.userDefaults = self.sharedServices.userDefaults;
     [self setupSystemCloudAccessSegmentedControl];
-    [self setupAppCloudAccessSegmentedControl];
+    [self setupStorageBackendSegmentedControl];
 }
 
 #pragma mark - Navigation
@@ -56,12 +56,12 @@
 }
 
 #pragma mark - User Actions
-- (IBAction)appCloudAccessSegmentedControlActionWithSender:(id)sender
+- (IBAction)storageBackendSegmentedControlActionWithSender:(id)sender
 {
-    BOOL appCloudAccessAllowed = (self.appCloudAccessSegmentedControl.selectedSegmentIndex == 1);
-    self.userDefaults.appCloudAccessAllowed = appCloudAccessAllowed;
-    [self setupAppCloudAccessSegmentedControl];
-    NSLog(@"%s allow:%@", __PRETTY_FUNCTION__, (appCloudAccessAllowed) ? @"YES" : @"NO");
+    BOOL usingCloudStorageBackend = (self.storageBackendSegmentedControl.selectedSegmentIndex == 1);
+    self.userDefaults.usingCloudStorageBackend = usingCloudStorageBackend;
+    [self setupStorageBackendSegmentedControl];
+    NSLog(@"%s allow:%@", __PRETTY_FUNCTION__, (usingCloudStorageBackend) ? @"YES" : @"NO");
 }
 
 - (IBAction)persistentStoreTypeSegmentedControlActionWithSender:(id)sender
@@ -100,7 +100,7 @@
 
 - (void)addCloudStorage
 {
-    if (!self.userDefaults.appCloudAccessAllowed) {
+    if (!self.userDefaults.usingCloudStorageBackend) {
         self.persistentStorageType = self.persistentStorageType;
         UIAlertView *alertView = [[UIAlertView alloc]
                                   initWithTitle:@"Missing App iCloud Permissions"
@@ -119,8 +119,8 @@
         }
         [self.dataManager addCloudStorage];
     }
-    
 }
+
 #pragma mark - Data Manager
 - (void)dataManagerDelegate:(DCDataManager *)dataManager
          shouldLockInterace:(BOOL)lockInterface
@@ -163,11 +163,11 @@
     [self.systemCloudAccessSegmentedControl setSelectedSegmentIndex:segmentIndex];
 }
 
-- (void)setupAppCloudAccessSegmentedControl
+- (void)setupStorageBackendSegmentedControl
 {
-    BOOL appCloudAccessAllowed = self.userDefaults.appCloudAccessAllowed;
+    BOOL appCloudAccessAllowed = self.userDefaults.usingCloudStorageBackend;
     NSInteger segmentIndex = (appCloudAccessAllowed) ? 1 : 0;
-    [self.appCloudAccessSegmentedControl setSelectedSegmentIndex:segmentIndex];
+    [self.storageBackendSegmentedControl setSelectedSegmentIndex:segmentIndex];
 }
 
 - (void)setPersistentStorageType:(DCPersistentStorageType)storageState

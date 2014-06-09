@@ -96,7 +96,7 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
 
 - (void)addCloudStorage
 {
-    NSAssert(self.userDefaults.appCloudAccessAllowed, @"The app must be configured to use iCloud.");
+    NSAssert(self.userDefaults.usingCloudStorageBackend, @"The app must be configured to use iCloud.");
     if (self.persistentStorageType != DCPersistentStorageTypeCloud) {
         [self.delegate dataManagerDelegate:self accessDataAllowed:NO];
         [self.managedObjectContext reset];

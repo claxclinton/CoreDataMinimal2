@@ -11,7 +11,7 @@
 @interface DCUserDefaults : NSObject
 @property (strong, nonatomic) id <NSObject, NSCopying, NSCoding> storedAccessIdentity;
 @property (strong, nonatomic) NSString *questionnaireIdentity;
-@property (assign, nonatomic) BOOL appCloudAccessAllowed;
+@property (assign, nonatomic) BOOL usingCloudStorageBackend;
 @property (readonly, nonatomic) BOOL persistentStore;
 
 + (instancetype)userDefaultsWithPersistentStore:(BOOL)persistentStore;

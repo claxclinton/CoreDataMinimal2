@@ -21,7 +21,7 @@ NSString * const DCAppCloudAccessAllowedKey = @"com.lillysoft.DailyCheck.appClou
 @synthesize storedAccessIdentity = _storedAccessIdentity;
 @synthesize questionnaireIdentity = _questionnaireIdentity;
 @synthesize persistentStore = _persistentStore;
-@synthesize appCloudAccessAllowed = _appCloudAccessAllowed;
+@synthesize usingCloudStorageBackend = _usingCloudStorageBackend;
 
 #pragma mark - Create And Init
 + (instancetype)userDefaultsWithPersistentStore:(BOOL)persistentStore
@@ -87,18 +87,18 @@ NSString * const DCAppCloudAccessAllowedKey = @"com.lillysoft.DailyCheck.appClou
     [self.userDefaults synchronize];
 }
 
-- (BOOL)appCloudAccessAllowed
+- (BOOL)usingCloudStorageBackend
 {
     if (self.persistentStore) {
         NSNumber *appCloudAccessAllowedNumber = [self.userDefaults objectForKey:DCAppCloudAccessAllowedKey];
-        _appCloudAccessAllowed = appCloudAccessAllowedNumber.boolValue;
+        _usingCloudStorageBackend = appCloudAccessAllowedNumber.boolValue;
     }
-    return _appCloudAccessAllowed;
+    return _usingCloudStorageBackend;
 }
 
-- (void)setAppCloudAccessAllowed:(BOOL)appCloudAccessAllowed
+- (void)setUsingCloudStorageBackend:(BOOL)appCloudAccessAllowed
 {
-    _appCloudAccessAllowed = appCloudAccessAllowed;
+    _usingCloudStorageBackend = appCloudAccessAllowed;
     [self.userDefaults setObject:@(appCloudAccessAllowed) forKey:DCAppCloudAccessAllowedKey];
     [self.userDefaults synchronize];
 }

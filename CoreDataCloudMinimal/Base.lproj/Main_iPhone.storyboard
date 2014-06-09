@@ -57,7 +57,7 @@
                                             <segment title="Use iCloud"/>
                                         </segments>
                                         <connections>
-                                            <action selector="appCloudAccessSegmentedControlActionWithSender:" destination="vXZ-lx-hvc" eventType="valueChanged" id="NSv-Yg-5rd"/>
+                                            <action selector="storageBackendSegmentedControlActionWithSender:" destination="vXZ-lx-hvc" eventType="valueChanged" id="RU0-od-1wV"/>
                                         </connections>
                                     </segmentedControl>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Persistent Store Type" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zoK-SQ-2Lq">
@@ -119,8 +119,8 @@
                         <color key="tintColor" red="0.93725490570000003" green="0.50980395079999996" blue="0.078431375319999996" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
                     <connections>
-                        <outlet property="appCloudAccessSegmentedControl" destination="n3C-JF-Fok" id="y28-xS-OHx"/>
                         <outlet property="persistentStoreTypeSegmentedControl" destination="NEL-ia-8qe" id="E9k-po-Llm"/>
+                        <outlet property="storageBackendSegmentedControl" destination="n3C-JF-Fok" id="cAN-o1-x8Q"/>
                         <outlet property="systemCloudAccessSegmentedControl" destination="Yzf-2t-p1J" id="qYb-HN-5qi"/>
                         <segue destination="8GM-rl-ZGp" kind="modal" identifier="accessData" id="dK7-CX-2kp"/>
                     </connections>
