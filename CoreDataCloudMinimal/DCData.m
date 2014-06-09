@@ -11,6 +11,6 @@
 
 @implementation DCData
 
-@dynamic value;
+@dynamic date;
 
 @end

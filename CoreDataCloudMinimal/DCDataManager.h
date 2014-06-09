@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @class DCDataManager;
+@class DCData;
 
 @protocol DCDataManagerDelegate <NSObject>
 - (void)dataManagerDelegate:(DCDataManager *)dataManager
@@ -30,4 +31,6 @@
 - (void)removeStorage;
 - (void)addLocalStorage;
 - (void)addCloudStorage;
+- (DCData *)insertDataItem;
+- (NSArray *)sortedData;
 @end

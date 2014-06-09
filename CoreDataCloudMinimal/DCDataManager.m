@@ -10,6 +10,7 @@
 
 #import "DCDataManager.h"
 #import "DCUserDefaults.h"
+#import "DCData.h"
 
 typedef NS_ENUM(NSUInteger, DCStorageState) {
     DCStorageStateNone = 0,
@@ -23,8 +24,9 @@ typedef NS_ENUM(NSUInteger, DCStorageState) {
 @property (strong, nonatomic) DCUserDefaults *userDefaults;
 @property (assign, nonatomic) DCStorageState storageState;
 @property (strong, nonatomic) NSPersistentStore *persistentStore;
-@property (strong, nonatomic) NSPersistentStoreCoordinator *storeCoordinator;
+@property (strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 @property (strong, nonatomic) NSManagedObjectModel *managedObjectModel;
+@property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @end
 
 @interface DCDataManager ()
@@ -68,7 +70,6 @@ typedef NS_ENUM(NSUInteger, DCStorageState) {
 - (void)removeStorage
 {
     self.storageState = DCStorageStateNone;
-    [self.delegate dataManagerDelegate:self accessDataAllowed:NO];
 }
 
 - (void)addLocalStorage
@@ -79,6 +80,8 @@ typedef NS_ENUM(NSUInteger, DCStorageState) {
     [self localPersistentStoreCoordinator:&persistentStoreCoordinator persistentStore:&persistentStore];
     self.localPersistentStoreCoordinator = persistentStoreCoordinator;
     self.localPersistentStore = persistentStore;
+    [self setPersistentStore:persistentStore persistentStoreCoordinator:persistentStoreCoordinator];
+    self.managedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator;
     [self.delegate dataManagerDelegate:self accessDataAllowed:YES];
     [self.delegate dataManagerDelegate:self shouldReload:YES];
 }
@@ -88,6 +91,29 @@ typedef NS_ENUM(NSUInteger, DCStorageState) {
     self.storageState = DCStorageStateCloud;
     [self.delegate dataManagerDelegate:self accessDataAllowed:YES];
     [self.delegate dataManagerDelegate:self shouldReload:YES];
+}
+
+- (DCData *)insertDataItem
+{
+    DCData *data = [NSEntityDescription
+                    insertNewObjectForEntityForName:@"Data"
+                    inManagedObjectContext:self.managedObjectContext];
+    data.date = [NSDate date];
+    return data;
+}
+
+- (NSArray *)sortedData
+{
+    
+}
+
+#pragma mark - Managed Object Context
+- (NSManagedObjectContext *)managedObjectContext
+{
+    if (_managedObjectContext == nil) {
+        _managedObjectContext = [[NSManagedObjectContext alloc]
+                                 initWithConcurrencyType:NSMainQueueConcurrencyType];
+    }
 }
 
 #pragma mark - Persistent Store Coordinators
@@ -103,9 +129,6 @@ typedef NS_ENUM(NSUInteger, DCStorageState) {
                                   initWithManagedObjectModel:self.managedObjectModel];
     
     // Create coordinator with persistent store.
-    NSString *sqliteFileName = [NSString stringWithFormat:@"%@.sqlite", self.modelName];
-    NSURL *applicationDocumentsDirectory = [self applicationDocumentsDirectory];
-    NSURL *storeURL = [applicationDocumentsDirectory URLByAppendingPathComponent:sqliteFileName];
     NSDictionary *options = @{NSReadOnlyPersistentStoreOption: @(YES),
                               NSPersistentStoreUbiquitousContentNameKey: self.modelName,
                               NSMigratePersistentStoresAutomaticallyOption: @(YES),
@@ -114,8 +137,7 @@ typedef NS_ENUM(NSUInteger, DCStorageState) {
     // Create persistent store and add to persistent store coordinator.
     NSError *addPersistentStoreError = nil;
     persistentStore = [persistentStoreCoordinator
-                       addPersistentStoreWithType:NSSQLiteStoreType
-                       configuration:nil URL:storeURL
+                       addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:nil
                        options:options error:&addPersistentStoreError];
     if (persistentStore == nil) {
         NSLog(@"When adding store to store coordinator, got error %@, with user info %@",
@@ -156,6 +178,13 @@ typedef NS_ENUM(NSUInteger, DCStorageState) {
 }
 
 #pragma mark - Helper Methods
+- (void)setPersistentStore:(NSPersistentStore *)persistentStore
+persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordinator
+{
+    self.persistentStore = persistentStore;
+    self.persistentStoreCoordinator = persistentStoreCoordinator;
+}
+
 - (NSURL *)applicationDocumentsDirectory
 {
     return [[[NSFileManager defaultManager]
