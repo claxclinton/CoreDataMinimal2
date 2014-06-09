@@ -7,15 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "DCPersistentStorageType.h"
 
 @class DCDataManager;
 @class DCData;
-
-typedef NS_ENUM(NSUInteger, DCPersistentStorageType) {
-    DCPersistentStorageTypeNone = 0,
-    DCPersistentStorageTypeLocal,
-    DCPersistentStorageTypeCloud
-};
 
 @protocol DCDataManagerDelegate <NSObject>
 @required

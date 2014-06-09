@@ -11,6 +11,7 @@
 NSString * const DCUbiquityIdentityTokenKey = @"com.lillysoft.DailyCheck.ubiquityIdentityToken";
 NSString * const DCQuestionnaireIdentityKey = @"com.lillysoft.DailyCheck.questionnaireIdentity";
 NSString * const DCAppCloudAccessAllowedKey = @"com.lillysoft.DailyCheck.appCloudAccessAllowed";
+NSString * const DCPersistentStorageTypeKey = @"com.lillysoft.DailyCheck.persistentStorageType";
 
 @interface DCUserDefaults ()
 @property (strong, nonatomic) NSUserDefaults *userDefaults;
@@ -22,6 +23,7 @@ NSString * const DCAppCloudAccessAllowedKey = @"com.lillysoft.DailyCheck.appClou
 @synthesize questionnaireIdentity = _questionnaireIdentity;
 @synthesize persistentStore = _persistentStore;
 @synthesize usingCloudStorageBackend = _usingCloudStorageBackend;
+@synthesize persistentStorageType = _persistentStorageType;
 
 #pragma mark - Create And Init
 + (instancetype)userDefaultsWithPersistentStore:(BOOL)persistentStore
@@ -100,6 +102,22 @@ NSString * const DCAppCloudAccessAllowedKey = @"com.lillysoft.DailyCheck.appClou
 {
     _usingCloudStorageBackend = appCloudAccessAllowed;
     [self.userDefaults setObject:@(appCloudAccessAllowed) forKey:DCAppCloudAccessAllowedKey];
+    [self.userDefaults synchronize];
+}
+
+- (DCPersistentStorageType)persistentStorageType
+{
+    if (self.persistentStore) {
+        NSNumber *persistentStorageTypeNumber = [self.userDefaults objectForKey:DCPersistentStorageTypeKey];
+        _persistentStorageType = persistentStorageTypeNumber.unsignedIntegerValue;
+    }
+    return _persistentStorageType;
+}
+
+- (void)setPersistentStorageType:(DCPersistentStorageType)persistentStorageType
+{
+    _persistentStorageType = persistentStorageType;
+    [self.userDefaults setObject:@(persistentStorageType) forKey:DCPersistentStorageTypeKey];
     [self.userDefaults synchronize];
 }
 @end

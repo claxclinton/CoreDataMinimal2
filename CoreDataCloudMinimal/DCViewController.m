@@ -36,6 +36,7 @@
     self.userDefaults = self.sharedServices.userDefaults;
     [self setupSystemCloudAccessSegmentedControl];
     [self setupStorageBackendSegmentedControl];
+    [self setStoredStorageType];
 }
 
 #pragma mark - Navigation
@@ -68,17 +69,7 @@
 {
     NSInteger selectedSegmentIndex = self.persistentStoreTypeSegmentedControl.selectedSegmentIndex;
     DCPersistentStorageType storageType = (DCPersistentStorageType)selectedSegmentIndex;
-    switch (storageType) {
-        case DCPersistentStorageTypeNone:
-            [self removeStorage];
-            break;
-        case DCPersistentStorageTypeLocal:
-            [self addLocalStorage];
-            break;
-        case DCPersistentStorageTypeCloud:
-            [self addCloudStorage];
-            break;
-    }
+    [self applyStorageType:storageType];
     NSLog(@"%s Change To:\"%@\"", __PRETTY_FUNCTION__, self.persistentStorageTypeDescription[@(storageType)]);
 }
 
@@ -173,5 +164,27 @@
 - (void)setPersistentStorageType:(DCPersistentStorageType)storageState
 {
     [self.persistentStoreTypeSegmentedControl setSelectedSegmentIndex:storageState];
+}
+
+- (void)applyStorageType:(DCPersistentStorageType)storageType
+{
+    switch (storageType) {
+        case DCPersistentStorageTypeNone:
+            [self removeStorage];
+            break;
+        case DCPersistentStorageTypeLocal:
+            [self addLocalStorage];
+            break;
+        case DCPersistentStorageTypeCloud:
+            [self addCloudStorage];
+            break;
+    }
+}
+
+- (void)setStoredStorageType
+{
+    DCPersistentStorageType persistentStorageType = self.userDefaults.persistentStorageType;
+    [self.persistentStoreTypeSegmentedControl setSelectedSegmentIndex:persistentStorageType];
+    [self applyStorageType:persistentStorageType];
 }
 @end
