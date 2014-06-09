@@ -11,13 +11,23 @@
 @class DCDataManager;
 @class DCData;
 
+typedef NS_ENUM(NSUInteger, DCPersistentStorageType) {
+    DCPersistentStorageTypeNone = 0,
+    DCPersistentStorageTypeLocal,
+    DCPersistentStorageTypeCloud
+};
+
 @protocol DCDataManagerDelegate <NSObject>
+@required
 - (void)dataManagerDelegate:(DCDataManager *)dataManager
          shouldLockInterace:(BOOL)lockInterface;
 - (void)dataManagerDelegate:(DCDataManager *)dataManager
           accessDataAllowed:(BOOL)accessDataAllowed;
 - (void)dataManagerDelegate:(DCDataManager *)dataManager
                shouldReload:(BOOL)shouldReload;
+@optional
+- (void)dataManagerDelegate:(DCDataManager *)dataManager
+     didChangeToStorageType:(DCPersistentStorageType)storageType;
 - (void)dataManagerDelegate:(DCDataManager *)dataManager
  didChangeUbiquityTokenFrom:(id)fromToken
             toUbiquityToken:(id)toToken;

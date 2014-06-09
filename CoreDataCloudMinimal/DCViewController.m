@@ -8,19 +8,14 @@
 
 #import "DCViewController.h"
 #import "DCDataManager.h"
-
-typedef NS_ENUM(NSUInteger, DCStorageState) {
-    DCStorageStateNone = 0,
-    DCStorageStateLocal,
-    DCStorageStateCloud
-};
+#import "DCDataTableViewController.h"
 
 @interface DCViewController () <DCDataManagerDelegate>
 @property (strong, nonatomic) IBOutlet UISegmentedControl *systemCloudAccessSegmentedControl;
 @property (strong, nonatomic) IBOutlet UISegmentedControl *appCloudAccessSegmentedControl;
 @property (strong, nonatomic) DCDataManager *dataManager;
 @property (strong, nonatomic) UIButton *selectedButton;
-@property (assign, nonatomic) DCStorageState storageState;
+@property (assign, nonatomic) DCPersistentStorageType persistentStorageType;
 @end
 
 @implementation DCViewController
@@ -31,6 +26,18 @@ typedef NS_ENUM(NSUInteger, DCStorageState) {
 }
 
 #pragma mark - Navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    NSString *identifier = segue.identifier;
+    UIViewController *viewController = segue.destinationViewController;
+    if ([identifier isEqualToString:@"accessData"]) {
+        UINavigationController *navigationController = (UINavigationController *)viewController;
+        UIViewController *topViewController = [navigationController topViewController];
+        DCDataTableViewController *dataTableViewController = (DCDataTableViewController *)topViewController;
+        dataTableViewController.dataManager = self.dataManager;
+    }
+}
+
 - (IBAction)unwindActionWithStoryboardSegue:(UIStoryboardSegue *)storyboardSegue
 {
 }
@@ -40,21 +47,18 @@ typedef NS_ENUM(NSUInteger, DCStorageState) {
 {
     NSLog(@"%s", __PRETTY_FUNCTION__);
     [self.dataManager removeStorage];
-    self.storageState = DCStorageStateNone;
 }
 
 - (IBAction)connectToLocalStorageButtonActionWithSender:(id)sender
 {
     NSLog(@"%s", __PRETTY_FUNCTION__);
     [self.dataManager addLocalStorage];
-    self.storageState = DCStorageStateLocal;
 }
 
 - (IBAction)connectToCloudStorageButtonActionWithSender:(id)sender
 {
     NSLog(@"%s", __PRETTY_FUNCTION__);
     [self.dataManager addCloudStorage];
-    self.storageState = DCStorageStateCloud;
 }
 
 - (IBAction)accessDataButtonActionWithSender:(id)sender
@@ -82,6 +86,12 @@ typedef NS_ENUM(NSUInteger, DCStorageState) {
 }
 
 - (void)dataManagerDelegate:(DCDataManager *)dataManager
+     didChangeToStorageType:(DCPersistentStorageType)storageType
+{
+    self.persistentStorageType = storageType;
+}
+
+- (void)dataManagerDelegate:(DCDataManager *)dataManager
  didChangeUbiquityTokenFrom:(id)fromToken
             toUbiquityToken:(id)toToken
 {
@@ -91,7 +101,7 @@ typedef NS_ENUM(NSUInteger, DCStorageState) {
 }
 
 #pragma mark - Helper Methods
-- (void)setStorageState:(DCStorageState)storageState
+- (void)setPersistentStorageType:(DCPersistentStorageType)storageState
 {
     [self.appCloudAccessSegmentedControl setSelectedSegmentIndex:storageState];
 }

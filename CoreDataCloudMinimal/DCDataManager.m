@@ -12,17 +12,11 @@
 #import "DCUserDefaults.h"
 #import "DCData.h"
 
-typedef NS_ENUM(NSUInteger, DCStorageState) {
-    DCStorageStateNone = 0,
-    DCStorageStateLocal,
-    DCStorageStateCloud
-};
-
 @interface DCDataManager ()
 @property (copy, nonatomic) NSString *modelName;
 @property (weak, nonatomic) id <DCDataManagerDelegate> delegate;
 @property (strong, nonatomic) DCUserDefaults *userDefaults;
-@property (assign, nonatomic) DCStorageState storageState;
+@property (assign, nonatomic) DCPersistentStorageType persistentStorageType;
 @property (strong, nonatomic) NSPersistentStore *persistentStore;
 @property (strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 @property (strong, nonatomic) NSManagedObjectModel *managedObjectModel;
@@ -54,7 +48,7 @@ typedef NS_ENUM(NSUInteger, DCStorageState) {
     if (self != nil) {
         self.modelName = modelName;
         self.delegate = delegate;
-        self.storageState = DCStorageStateNone;
+        self.persistentStorageType = DCPersistentStorageTypeNone;
         self.userDefaults = [DCUserDefaults userDefaultsWithPersistentStore:YES];
     }
     return self;
@@ -69,25 +63,25 @@ typedef NS_ENUM(NSUInteger, DCStorageState) {
 #pragma mark - Public Methods
 - (void)removeStorage
 {
-    self.storageState = DCStorageStateNone;
+    self.persistentStorageType = DCPersistentStorageTypeNone;
 }
 
 - (void)addLocalStorage
 {
-    if (self.storageState != DCStorageStateLocal) {
+    if (self.persistentStorageType != DCPersistentStorageTypeLocal) {
         [self.delegate dataManagerDelegate:self accessDataAllowed:NO];
         [self.managedObjectContext reset];
         [self setupLocalPersistentStore];
         self.managedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator;
         [self.delegate dataManagerDelegate:self accessDataAllowed:YES];
         [self.delegate dataManagerDelegate:self shouldReload:YES];
-        self.storageState = DCStorageStateLocal;
+        self.persistentStorageType = DCPersistentStorageTypeLocal;
     }
 }
 
 - (void)addCloudStorage
 {
-    self.storageState = DCStorageStateCloud;
+    self.persistentStorageType = DCPersistentStorageTypeCloud;
     [self.delegate dataManagerDelegate:self accessDataAllowed:YES];
     [self.delegate dataManagerDelegate:self shouldReload:YES];
 }
@@ -138,15 +132,15 @@ typedef NS_ENUM(NSUInteger, DCStorageState) {
                                   initWithManagedObjectModel:self.managedObjectModel];
     
     // Create coordinator with persistent store.
-    NSDictionary *options = @{NSReadOnlyPersistentStoreOption: @(YES),
-                              NSPersistentStoreUbiquitousContentNameKey: self.modelName,
-                              NSMigratePersistentStoresAutomaticallyOption: @(YES),
-                              NSInferMappingModelAutomaticallyOption: @(YES)};
+    NSDictionary *options = [self localPersistentStoreCoordinatorOptions];
+    
+    // Setup local persistent store URL.
+    NSURL *storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"Data-Local.sqlite"];
     
     // Create persistent store and add to persistent store coordinator.
     NSError *addPersistentStoreError = nil;
     persistentStore = [persistentStoreCoordinator
-                       addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:nil
+                       addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL
                        options:options error:&addPersistentStoreError];
     if (persistentStore == nil) {
         NSLog(@"When adding store to store coordinator, got error %@, with user info %@",
@@ -187,6 +181,7 @@ typedef NS_ENUM(NSUInteger, DCStorageState) {
 }
 
 #pragma mark - Persistent Store Helper Methods
+#pragma mark Common
 - (void)setPersistentStore:(NSPersistentStore *)persistentStore
 persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordinator
 {
@@ -194,11 +189,10 @@ persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordi
     self.persistentStoreCoordinator = persistentStoreCoordinator;
 }
 
+#pragma mark Local Persistent Store
 - (NSDictionary *)localPersistentStoreCoordinatorOptions
 {
-    NSDictionary *options = @{NSReadOnlyPersistentStoreOption: @(YES),
-                              NSPersistentStoreUbiquitousContentNameKey: self.modelName,
-                              NSMigratePersistentStoresAutomaticallyOption: @(YES),
+    NSDictionary *options = @{NSMigratePersistentStoresAutomaticallyOption: @(YES),
                               NSInferMappingModelAutomaticallyOption: @(YES)};
     return options;
 }
@@ -214,6 +208,7 @@ persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordi
     NSLog(@"Local persistent store: %@", persistentStore.URL);
 }
 
+#pragma mark Cloud Persistent Store
 - (NSDictionary *)cloudPersistentStoreCoordinatorOptions
 {
     NSDictionary *options = @{NSReadOnlyPersistentStoreOption: @(YES),
@@ -222,6 +217,16 @@ persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordi
                               NSInferMappingModelAutomaticallyOption: @(YES)};
     return options;
 }
+
+#pragma mark - Internal Helper Methods
+- (void)setPersistentStorageType:(DCPersistentStorageType)persistentStorageType
+{
+    _persistentStorageType = persistentStorageType;
+    if ([self.delegate respondsToSelector:@selector(dataManagerDelegate:didChangeToStorageType:)]) {
+        [self.delegate dataManagerDelegate:self didChangeToStorageType:persistentStorageType];
+    }
+}
+
 - (NSURL *)applicationDocumentsDirectory
 {
     return [[[NSFileManager defaultManager]
