@@ -90,7 +90,8 @@ NSString * const DCAppCloudAccessAllowedKey = @"com.lillysoft.DailyCheck.appClou
 - (BOOL)appCloudAccessAllowed
 {
     if (self.persistentStore) {
-        _appCloudAccessAllowed = [self.userDefaults objectForKey:DCAppCloudAccessAllowedKey];
+        NSNumber *appCloudAccessAllowedNumber = [self.userDefaults objectForKey:DCAppCloudAccessAllowedKey];
+        _appCloudAccessAllowed = appCloudAccessAllowedNumber.boolValue;
     }
     return _appCloudAccessAllowed;
 }
@@ -99,5 +100,6 @@ NSString * const DCAppCloudAccessAllowedKey = @"com.lillysoft.DailyCheck.appClou
 {
     _appCloudAccessAllowed = appCloudAccessAllowed;
     [self.userDefaults setObject:@(appCloudAccessAllowed) forKey:DCAppCloudAccessAllowedKey];
+    [self.userDefaults synchronize];
 }
 @end

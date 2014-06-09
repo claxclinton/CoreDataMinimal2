@@ -34,6 +34,8 @@
                                               @(DCPersistentStorageTypeLocal): @"Local Persistent Store",
                                               @(DCPersistentStorageTypeCloud): @"Cloud Persistent Store"};
     self.userDefaults = self.sharedServices.userDefaults;
+    [self setupSystemCloudAccessSegmentedControl];
+    [self setupAppCloudAccessSegmentedControl];
 }
 
 #pragma mark - Navigation
@@ -58,6 +60,7 @@
 {
     BOOL appCloudAccessAllowed = (self.appCloudAccessSegmentedControl.selectedSegmentIndex == 1);
     self.userDefaults.appCloudAccessAllowed = appCloudAccessAllowed;
+    [self setupAppCloudAccessSegmentedControl];
     NSLog(@"%s allow:%@", __PRETTY_FUNCTION__, (appCloudAccessAllowed) ? @"YES" : @"NO");
 }
 
@@ -67,13 +70,13 @@
     DCPersistentStorageType storageType = (DCPersistentStorageType)selectedSegmentIndex;
     switch (storageType) {
         case DCPersistentStorageTypeNone:
-            [self.dataManager removeStorage];
+            [self removeStorage];
             break;
         case DCPersistentStorageTypeLocal:
-            [self.dataManager addLocalStorage];
+            [self addLocalStorage];
             break;
         case DCPersistentStorageTypeCloud:
-            [self.dataManager addCloudStorage];
+            [self addCloudStorage];
             break;
     }
     NSLog(@"%s Change To:\"%@\"", __PRETTY_FUNCTION__, self.persistentStorageTypeDescription[@(storageType)]);
@@ -84,6 +87,38 @@
     [self performSegueWithIdentifier:@"accessData" sender:self];
 }
 
+#pragma mark - Storage Change Method
+- (void)removeStorage
+{
+    [self.dataManager removeStorage];
+}
+
+- (void)addLocalStorage
+{
+    [self.dataManager addLocalStorage];
+}
+
+- (void)addCloudStorage
+{
+    if (!self.userDefaults.appCloudAccessAllowed) {
+        self.persistentStorageType = self.persistentStorageType;
+        UIAlertView *alertView = [[UIAlertView alloc]
+                                  initWithTitle:@"Missing App iCloud Permissions"
+                                  message:@"Allow the app to access iCloud from within the app."
+                                  delegate:nil cancelButtonTitle:@"Done" otherButtonTitles:nil];
+        [alertView show];
+    } else if (self.userDefaults.storedAccessIdentity == nil) {
+        self.persistentStorageType = self.persistentStorageType;
+        UIAlertView *alertView = [[UIAlertView alloc]
+                                  initWithTitle:@"Missing System iCloud Permissions"
+                                  message:@"Allow the app to access iCloud in System Settings."
+                                  delegate:nil cancelButtonTitle:@"Done" otherButtonTitles:nil];
+        [alertView show];
+    } else {
+        [self.dataManager addCloudStorage];
+    }
+    
+}
 #pragma mark - Data Manager
 - (void)dataManagerDelegate:(DCDataManager *)dataManager
          shouldLockInterace:(BOOL)lockInterface
@@ -119,6 +154,20 @@
 }
 
 #pragma mark - Helper Methods
+- (void)setupSystemCloudAccessSegmentedControl
+{
+    id ubiquityIdentity = self.userDefaults.storedAccessIdentity;
+    NSInteger segmentIndex = (ubiquityIdentity == nil) ? 0 : 1;
+    [self.systemCloudAccessSegmentedControl setSelectedSegmentIndex:segmentIndex];
+}
+
+- (void)setupAppCloudAccessSegmentedControl
+{
+    BOOL appCloudAccessAllowed = self.userDefaults.appCloudAccessAllowed;
+    NSInteger segmentIndex = (appCloudAccessAllowed) ? 1 : 0;
+    [self.appCloudAccessSegmentedControl setSelectedSegmentIndex:segmentIndex];
+}
+
 - (void)setPersistentStorageType:(DCPersistentStorageType)storageState
 {
     [self.persistentStoreTypeSegmentedControl setSelectedSegmentIndex:storageState];

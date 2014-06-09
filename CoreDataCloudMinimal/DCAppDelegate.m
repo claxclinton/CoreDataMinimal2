@@ -6,6 +6,8 @@
 //  Copyright (c) 2014 Claes Lillieskold. All rights reserved.
 //
 
+@import CoreData;
+
 #import "DCAppDelegate.h"
 #import "DCSharedServices.h"
 
@@ -13,6 +15,25 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+        NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+        NSOperationQueue *mainQueue = [NSOperationQueue mainQueue];
+        [notificationCenter addObserverForName:NSPersistentStoreCoordinatorStoresWillChangeNotification
+                                        object:nil queue:mainQueue usingBlock:^(NSNotification *note) {
+                                            NSLog(@"App Delegate: NSPersistentStoreCoordinatorStoresWillChangeNotification");
+                                        }];
+        [notificationCenter addObserverForName:NSPersistentStoreCoordinatorStoresDidChangeNotification
+                                        object:nil queue:mainQueue usingBlock:^(NSNotification *note) {
+                                            NSLog(@"App Delegate: NSPersistentStoreCoordinatorStoresDidChangeNotification");
+                                        }];
+        [notificationCenter addObserverForName:NSPersistentStoreDidImportUbiquitousContentChangesNotification
+                                        object:nil queue:mainQueue usingBlock:^(NSNotification *note) {
+                                            NSLog(@"App Delegate: NSPersistentStoreDidImportUbiquitousContentChangesNotification");
+                                        }];
+        [notificationCenter addObserverForName:NSUbiquityIdentityDidChangeNotification object:nil
+                                         queue:mainQueue usingBlock:^(NSNotification *note) {
+                                             NSLog(@"App Delegate: NSUbiquityIdentityDidChangeNotification");
+                                         }];
+    
     return YES;
 }
 							
