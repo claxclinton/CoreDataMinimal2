@@ -74,16 +74,15 @@ typedef NS_ENUM(NSUInteger, DCStorageState) {
 
 - (void)addLocalStorage
 {
-    self.storageState = DCStorageStateLocal;
-    NSPersistentStoreCoordinator *persistentStoreCoordinator;
-    NSPersistentStore *persistentStore;
-    [self localPersistentStoreCoordinator:&persistentStoreCoordinator persistentStore:&persistentStore];
-    self.localPersistentStoreCoordinator = persistentStoreCoordinator;
-    self.localPersistentStore = persistentStore;
-    [self setPersistentStore:persistentStore persistentStoreCoordinator:persistentStoreCoordinator];
-    self.managedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator;
-    [self.delegate dataManagerDelegate:self accessDataAllowed:YES];
-    [self.delegate dataManagerDelegate:self shouldReload:YES];
+    if (self.storageState != DCStorageStateLocal) {
+        [self.delegate dataManagerDelegate:self accessDataAllowed:NO];
+        [self.managedObjectContext reset];
+        [self setupLocalPersistentStore];
+        self.managedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator;
+        [self.delegate dataManagerDelegate:self accessDataAllowed:YES];
+        [self.delegate dataManagerDelegate:self shouldReload:YES];
+        self.storageState = DCStorageStateLocal;
+    }
 }
 
 - (void)addCloudStorage
@@ -104,7 +103,16 @@ typedef NS_ENUM(NSUInteger, DCStorageState) {
 
 - (NSArray *)sortedData
 {
-    
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Data"];
+    NSSortDescriptor *sortByDate = [NSSortDescriptor sortDescriptorWithKey:@"date" ascending:NO];
+    [fetchRequest setSortDescriptors:@[sortByDate]];
+    NSError *fetchExecutionError;
+    NSArray *results = [self.managedObjectContext executeFetchRequest:fetchRequest error:&fetchExecutionError];
+    if (results == nil) {
+        NSLog(@"Failed to execute fetch with error: %@.", fetchExecutionError);
+        abort();
+    }
+    return results;
 }
 
 #pragma mark - Managed Object Context
@@ -114,6 +122,7 @@ typedef NS_ENUM(NSUInteger, DCStorageState) {
         _managedObjectContext = [[NSManagedObjectContext alloc]
                                  initWithConcurrencyType:NSMainQueueConcurrencyType];
     }
+    return _managedObjectContext;
 }
 
 #pragma mark - Persistent Store Coordinators
@@ -177,7 +186,7 @@ typedef NS_ENUM(NSUInteger, DCStorageState) {
     return _managedObjectModel;
 }
 
-#pragma mark - Helper Methods
+#pragma mark - Persistent Store Helper Methods
 - (void)setPersistentStore:(NSPersistentStore *)persistentStore
 persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordinator
 {
@@ -185,6 +194,34 @@ persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordi
     self.persistentStoreCoordinator = persistentStoreCoordinator;
 }
 
+- (NSDictionary *)localPersistentStoreCoordinatorOptions
+{
+    NSDictionary *options = @{NSReadOnlyPersistentStoreOption: @(YES),
+                              NSPersistentStoreUbiquitousContentNameKey: self.modelName,
+                              NSMigratePersistentStoresAutomaticallyOption: @(YES),
+                              NSInferMappingModelAutomaticallyOption: @(YES)};
+    return options;
+}
+
+- (void)setupLocalPersistentStore
+{
+    NSPersistentStoreCoordinator *persistentStoreCoordinator;
+    NSPersistentStore *persistentStore;
+    [self localPersistentStoreCoordinator:&persistentStoreCoordinator persistentStore:&persistentStore];
+    self.localPersistentStoreCoordinator = persistentStoreCoordinator;
+    self.localPersistentStore = persistentStore;
+    [self setPersistentStore:persistentStore persistentStoreCoordinator:persistentStoreCoordinator];
+    NSLog(@"Local persistent store: %@", persistentStore.URL);
+}
+
+- (NSDictionary *)cloudPersistentStoreCoordinatorOptions
+{
+    NSDictionary *options = @{NSReadOnlyPersistentStoreOption: @(YES),
+                              NSPersistentStoreUbiquitousContentNameKey: self.modelName,
+                              NSMigratePersistentStoresAutomaticallyOption: @(YES),
+                              NSInferMappingModelAutomaticallyOption: @(YES)};
+    return options;
+}
 - (NSURL *)applicationDocumentsDirectory
 {
     return [[[NSFileManager defaultManager]
