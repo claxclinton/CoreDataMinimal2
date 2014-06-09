@@ -23,6 +23,10 @@
 @property (strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 @property (strong, nonatomic) NSManagedObjectModel *managedObjectModel;
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
+@property (assign, nonatomic) BOOL registeredForNotificationStoresWillChange;
+@property (assign, nonatomic) BOOL registeredForNotificationStoresDidChange;
+@property (assign, nonatomic) BOOL registeredForNotificationDidImportUbiquitousContent;
+@property (assign, nonatomic) BOOL registeredForNotificationUbiquitousIdentityDidChange;
 @end
 
 @interface DCDataManager ()
@@ -43,8 +47,7 @@
     return [[DCDataManager alloc] initWithModelName:modelName delegate:delegate];
 }
 
-- (instancetype)initWithModelName:(NSString *)modelName
-                         delegate:(id <DCDataManagerDelegate>)delegate
+- (instancetype)initWithModelName:(NSString *)modelName delegate:(id <DCDataManagerDelegate>)delegate
 {
     self = [super init];
     if (self != nil) {
@@ -53,6 +56,7 @@
         self.persistentStorageType = DCPersistentStorageTypeNone;
         self.sharedServices = [DCSharedServices sharedServices];
         self.userDefaults = self.sharedServices.userDefaults;
+        [self registerForCloudNotifications];
     }
     return self;
 }
@@ -125,6 +129,78 @@
         }
     }
     return results;
+}
+
+#pragma mark - Cloud Notifications
+- (void)unregisterForCloudNotifications
+{
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    if (self.registeredForNotificationStoresWillChange) {
+        [notificationCenter removeObserver:self forKeyPath:NSPersistentStoreCoordinatorStoresWillChangeNotification];
+        self.registeredForNotificationStoresWillChange = NO;
+    }
+    if (self.registeredForNotificationStoresDidChange) {
+        [notificationCenter removeObserver:self forKeyPath:NSPersistentStoreCoordinatorStoresDidChangeNotification];
+        self.registeredForNotificationStoresDidChange = NO;
+    }
+    if (self.registeredForNotificationDidImportUbiquitousContent) {
+        [notificationCenter removeObserver:self forKeyPath:NSPersistentStoreDidImportUbiquitousContentChangesNotification];
+        self.registeredForNotificationDidImportUbiquitousContent = NO;
+    }
+    if (self.registeredForNotificationUbiquitousIdentityDidChange) {
+        [notificationCenter removeObserver:self forKeyPath:NSUbiquityIdentityDidChangeNotification];
+        self.registeredForNotificationUbiquitousIdentityDidChange = YES;
+    }
+}
+
+- (void)registerForCloudNotifications
+{
+    [self unregisterForCloudNotifications];
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    NSPersistentStoreCoordinator *persistentStoreCoordinator = self.persistentStoreCoordinator;
+    __weak typeof(self)weakSelf = self;
+    NSOperationQueue *mainQueue = [NSOperationQueue mainQueue];
+    [notificationCenter addObserverForName:NSPersistentStoreCoordinatorStoresWillChangeNotification
+                                    object:persistentStoreCoordinator queue:mainQueue usingBlock:^(NSNotification *note) {
+                                        [weakSelf storesWillChangeWithNotification:note];
+                                    }];
+    self.registeredForNotificationStoresWillChange = YES;
+    [notificationCenter addObserverForName:NSPersistentStoreCoordinatorStoresDidChangeNotification
+                                    object:persistentStoreCoordinator queue:mainQueue usingBlock:^(NSNotification *note) {
+                                        [weakSelf storesDidChangeWithNotification:note];
+                                    }];
+    self.registeredForNotificationStoresDidChange = YES;
+    [notificationCenter addObserverForName:NSPersistentStoreDidImportUbiquitousContentChangesNotification
+                                    object:persistentStoreCoordinator queue:mainQueue usingBlock:^(NSNotification *note) {
+                                        [weakSelf persistentStoreDidImportUbiquitousContentChanges:note];
+                                    }];
+    self.registeredForNotificationDidImportUbiquitousContent = YES;
+    [notificationCenter addObserverForName:NSUbiquityIdentityDidChangeNotification object:nil
+                                     queue:mainQueue usingBlock:^(NSNotification *note) {
+                                         [weakSelf ubiquityIdentityDidChangeWithNotification:note];
+                                     }];
+    self.registeredForNotificationUbiquitousIdentityDidChange = YES;
+}
+
+- (void)storesWillChangeWithNotification:(NSNotification *)notification
+{
+}
+
+- (void)storesDidChangeWithNotification:(NSNotification *)notification
+{
+}
+
+- (void)persistentStoreDidImportUbiquitousContentChanges:(NSNotification *)changeNotification
+{
+}
+
+- (void)ubiquityIdentityDidChangeWithNotification:(NSNotification *)notification
+{
+    id previousUbiquityIdentity = self.userDefaults.storedAccessIdentity;
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    id nextUbiquityIdentity = [fileManager ubiquityIdentityToken];
+    [self.delegate dataManagerDelegate:self didChangeUbiquityTokenFrom:previousUbiquityIdentity toUbiquityToken:nextUbiquityIdentity];
+    self.userDefaults.storedAccessIdentity = nextUbiquityIdentity;
 }
 
 #pragma mark - Managed Object Context
