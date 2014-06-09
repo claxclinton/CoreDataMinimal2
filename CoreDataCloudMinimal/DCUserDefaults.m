@@ -10,6 +10,7 @@
 
 NSString * const DCUbiquityIdentityTokenKey = @"com.lillysoft.DailyCheck.ubiquityIdentityToken";
 NSString * const DCQuestionnaireIdentityKey = @"com.lillysoft.DailyCheck.questionnaireIdentity";
+NSString * const DCAppCloudAccessAllowedKey = @"com.lillysoft.DailyCheck.appCloudAccessAllowed";
 
 @interface DCUserDefaults ()
 @property (strong, nonatomic) NSUserDefaults *userDefaults;
@@ -20,6 +21,7 @@ NSString * const DCQuestionnaireIdentityKey = @"com.lillysoft.DailyCheck.questio
 @synthesize storedAccessIdentity = _storedAccessIdentity;
 @synthesize questionnaireIdentity = _questionnaireIdentity;
 @synthesize persistentStore = _persistentStore;
+@synthesize appCloudAccessAllowed = _appCloudAccessAllowed;
 
 #pragma mark - Create And Init
 + (instancetype)userDefaultsWithPersistentStore:(BOOL)persistentStore
@@ -83,5 +85,19 @@ NSString * const DCQuestionnaireIdentityKey = @"com.lillysoft.DailyCheck.questio
         [self.userDefaults setObject:_questionnaireIdentity forKey:DCQuestionnaireIdentityKey];
     }
     [self.userDefaults synchronize];
+}
+
+- (BOOL)appCloudAccessAllowed
+{
+    if (self.persistentStore) {
+        _appCloudAccessAllowed = [self.userDefaults objectForKey:DCAppCloudAccessAllowedKey];
+    }
+    return _appCloudAccessAllowed;
+}
+
+- (void)setAppCloudAccessAllowed:(BOOL)appCloudAccessAllowed
+{
+    _appCloudAccessAllowed = appCloudAccessAllowed;
+    [self.userDefaults setObject:@(appCloudAccessAllowed) forKey:DCAppCloudAccessAllowedKey];
 }
 @end

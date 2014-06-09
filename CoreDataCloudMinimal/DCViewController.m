@@ -7,22 +7,33 @@
 //
 
 #import "DCViewController.h"
+#import "DCSharedServices.h"
 #import "DCDataManager.h"
+#import "DCUserDefaults.h"
 #import "DCDataTableViewController.h"
 
 @interface DCViewController () <DCDataManagerDelegate>
 @property (strong, nonatomic) IBOutlet UISegmentedControl *systemCloudAccessSegmentedControl;
 @property (strong, nonatomic) IBOutlet UISegmentedControl *appCloudAccessSegmentedControl;
+@property (strong, nonatomic) IBOutlet UISegmentedControl *persistentStoreTypeSegmentedControl;
 @property (strong, nonatomic) DCDataManager *dataManager;
 @property (strong, nonatomic) UIButton *selectedButton;
 @property (assign, nonatomic) DCPersistentStorageType persistentStorageType;
+@property (strong, nonatomic) NSDictionary *persistentStorageTypeDescription;
+@property (strong, nonatomic) DCSharedServices *sharedServices;
+@property (strong, nonatomic) DCUserDefaults *userDefaults;
 @end
 
 @implementation DCViewController
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.sharedServices = [DCSharedServices sharedServices];
     self.dataManager = [DCDataManager dataManagerWithModelName:@"Model" delegate:self];
+    self.persistentStorageTypeDescription = @{@(DCPersistentStorageTypeNone): @"No Persistent Store",
+                                              @(DCPersistentStorageTypeLocal): @"Local Persistent Store",
+                                              @(DCPersistentStorageTypeCloud): @"Cloud Persistent Store"};
+    self.userDefaults = self.sharedServices.userDefaults;
 }
 
 #pragma mark - Navigation
@@ -43,22 +54,29 @@
 }
 
 #pragma mark - User Actions
-- (IBAction)disconnectButtonActionWithSender:(id)sender
+- (IBAction)appCloudAccessSegmentedControlActionWithSender:(id)sender
 {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
-    [self.dataManager removeStorage];
+    BOOL appCloudAccessAllowed = (self.appCloudAccessSegmentedControl.selectedSegmentIndex == 1);
+    self.userDefaults.appCloudAccessAllowed = appCloudAccessAllowed;
+    NSLog(@"%s allow:%@", __PRETTY_FUNCTION__, (appCloudAccessAllowed) ? @"YES" : @"NO");
 }
 
-- (IBAction)connectToLocalStorageButtonActionWithSender:(id)sender
+- (IBAction)persistentStoreTypeSegmentedControlActionWithSender:(id)sender
 {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
-    [self.dataManager addLocalStorage];
-}
-
-- (IBAction)connectToCloudStorageButtonActionWithSender:(id)sender
-{
-    NSLog(@"%s", __PRETTY_FUNCTION__);
-    [self.dataManager addCloudStorage];
+    NSInteger selectedSegmentIndex = self.persistentStoreTypeSegmentedControl.selectedSegmentIndex;
+    DCPersistentStorageType storageType = (DCPersistentStorageType)selectedSegmentIndex;
+    switch (storageType) {
+        case DCPersistentStorageTypeNone:
+            [self.dataManager removeStorage];
+            break;
+        case DCPersistentStorageTypeLocal:
+            [self.dataManager addLocalStorage];
+            break;
+        case DCPersistentStorageTypeCloud:
+            [self.dataManager addCloudStorage];
+            break;
+    }
+    NSLog(@"%s Change To:\"%@\"", __PRETTY_FUNCTION__, self.persistentStorageTypeDescription[@(storageType)]);
 }
 
 - (IBAction)accessDataButtonActionWithSender:(id)sender
@@ -103,6 +121,6 @@
 #pragma mark - Helper Methods
 - (void)setPersistentStorageType:(DCPersistentStorageType)storageState
 {
-    [self.appCloudAccessSegmentedControl setSelectedSegmentIndex:storageState];
+    [self.persistentStoreTypeSegmentedControl setSelectedSegmentIndex:storageState];
 }
 @end

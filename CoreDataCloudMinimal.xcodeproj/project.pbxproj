@@ -27,6 +27,7 @@
 		4BC0D27419407D8B00E2142B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4BC0D27219407D8B00E2142B /* InfoPlist.strings */; };
 		4BC0D27619407D8B00E2142B /* CoreDataCloudMinimalTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BC0D27519407D8B00E2142B /* CoreDataCloudMinimalTests.m */; };
 		4BC0D2811940820900E2142B /* DCDataTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BC0D2801940820900E2142B /* DCDataTableViewController.m */; };
+		4BDA27D21945C3B600E475F3 /* DCSharedServices.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BDA27D11945C3B600E475F3 /* DCSharedServices.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,6 +71,8 @@
 		4BC0D27519407D8B00E2142B /* CoreDataCloudMinimalTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CoreDataCloudMinimalTests.m; sourceTree = "<group>"; };
 		4BC0D27F1940820900E2142B /* DCDataTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCDataTableViewController.h; sourceTree = "<group>"; };
 		4BC0D2801940820900E2142B /* DCDataTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DCDataTableViewController.m; sourceTree = "<group>"; };
+		4BDA27D01945C3B600E475F3 /* DCSharedServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCSharedServices.h; sourceTree = "<group>"; };
+		4BDA27D11945C3B600E475F3 /* DCSharedServices.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DCSharedServices.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,7 +132,6 @@
 		4BC0D24D19407D8B00E2142B /* CoreDataCloudMinimal */ = {
 			isa = PBXGroup;
 			children = (
-				4B1355B41942EB3200B2E01D /* CoreDataCloudMinimal.entitlements */,
 				4BC0D25619407D8B00E2142B /* DCAppDelegate.h */,
 				4BC0D25719407D8B00E2142B /* DCAppDelegate.m */,
 				4BC0D25C19407D8B00E2142B /* Main_iPad.storyboard */,
@@ -142,6 +144,8 @@
 				4B4A90221942D06A005ADA9B /* DCDataManager.m */,
 				4B4053D41943745700892360 /* DCUserDefaults.h */,
 				4B4053D51943745700892360 /* DCUserDefaults.m */,
+				4BDA27D01945C3B600E475F3 /* DCSharedServices.h */,
+				4BDA27D11945C3B600E475F3 /* DCSharedServices.m */,
 				4BC0D26219407D8B00E2142B /* Images.xcassets */,
 				4BC0D24E19407D8B00E2142B /* Supporting Files */,
 			);
@@ -151,6 +155,7 @@
 		4BC0D24E19407D8B00E2142B /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				4B1355B41942EB3200B2E01D /* CoreDataCloudMinimal.entitlements */,
 				4BC0D24F19407D8B00E2142B /* CoreDataCloudMinimal-Info.plist */,
 				4BC0D25019407D8B00E2142B /* InfoPlist.strings */,
 				4BC0D25319407D8B00E2142B /* main.m */,
@@ -291,6 +296,7 @@
 				4BC0D25419407D8B00E2142B /* main.m in Sources */,
 				4BC0D26119407D8B00E2142B /* DCViewController.m in Sources */,
 				4B4A901A1942CFA9005ADA9B /* Model.xcdatamodeld in Sources */,
+				4BDA27D21945C3B600E475F3 /* DCSharedServices.m in Sources */,
 				4B4053D91943977600892360 /* DCData.m in Sources */,
 				4BC0D2811940820900E2142B /* DCDataTableViewController.m in Sources */,
 				4BC0D25819407D8B00E2142B /* DCAppDelegate.m in Sources */,

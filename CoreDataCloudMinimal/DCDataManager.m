@@ -9,12 +9,14 @@
 @import CoreData;
 
 #import "DCDataManager.h"
+#import "DCSharedServices.h"
 #import "DCUserDefaults.h"
 #import "DCData.h"
 
 @interface DCDataManager ()
 @property (copy, nonatomic) NSString *modelName;
 @property (weak, nonatomic) id <DCDataManagerDelegate> delegate;
+@property (strong, nonatomic) DCSharedServices *sharedServices;
 @property (strong, nonatomic) DCUserDefaults *userDefaults;
 @property (assign, nonatomic) DCPersistentStorageType persistentStorageType;
 @property (strong, nonatomic) NSPersistentStore *persistentStore;
@@ -49,7 +51,8 @@
         self.modelName = modelName;
         self.delegate = delegate;
         self.persistentStorageType = DCPersistentStorageTypeNone;
-        self.userDefaults = [DCUserDefaults userDefaultsWithPersistentStore:YES];
+        self.sharedServices = [DCSharedServices sharedServices];
+        self.userDefaults = self.sharedServices.userDefaults;
     }
     return self;
 }
