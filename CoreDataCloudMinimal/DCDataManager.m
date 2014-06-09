@@ -60,7 +60,7 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
         self.persistentStorageType = DCPersistentStorageTypeNone;
         self.sharedServices = [DCSharedServices sharedServices];
         self.userDefaults = self.sharedServices.userDefaults;
-        [self registerForCloudNotifications];
+        [self registerForCloudNotificationsWithPersistentStoreCoordinator:nil];
         [self updateStoredAccessIdentity];
     }
     return self;
@@ -87,6 +87,7 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
         [self.delegate dataManagerDelegate:self accessDataAllowed:NO];
         [self.managedObjectContext reset];
         [self setupLocalPersistentStore];
+        self.managedObjectContext = nil;
         self.managedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator;
         [self.delegate dataManagerDelegate:self accessDataAllowed:YES];
         [self.delegate dataManagerDelegate:self shouldReload:YES];
@@ -101,6 +102,7 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
         [self.delegate dataManagerDelegate:self accessDataAllowed:NO];
         [self.managedObjectContext reset];
         [self setupCloudPersistentStore];
+        self.managedObjectContext = nil;
         self.managedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator;
         self.persistentStorageType = DCPersistentStorageTypeCloud;
         [self.delegate dataManagerDelegate:self accessDataAllowed:YES];
@@ -165,11 +167,10 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
     }
 }
 
-- (void)registerForCloudNotifications
+- (void)registerForCloudNotificationsWithPersistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordinator
 {
     [self unregisterForCloudNotifications];
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
-    NSPersistentStoreCoordinator *persistentStoreCoordinator = self.persistentStoreCoordinator;
     __weak typeof(self)weakSelf = self;
     NSOperationQueue *mainQueue = [NSOperationQueue mainQueue];
     [notificationCenter addObserverForName:NSPersistentStoreCoordinatorStoresWillChangeNotification
@@ -196,14 +197,36 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
 
 - (void)storesWillChangeWithNotification:(NSNotification *)notification
 {
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+    [self.delegate dataManagerDelegate:self accessDataAllowed:NO];
+    [self.delegate dataManagerDelegate:self shouldLockInterace:YES];
+    if ([self.managedObjectContext hasChanges]) {
+        NSError *saveError;
+        BOOL saveSuccess = [self.managedObjectContext save:&saveError];
+        if (!saveSuccess) {
+            NSLog(@"Failed to save with error: %@.", saveError);
+        }
+    }
+    [self.managedObjectContext reset];
 }
 
 - (void)storesDidChangeWithNotification:(NSNotification *)notification
 {
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+    [self.delegate dataManagerDelegate:self accessDataAllowed:YES];
+    [self.delegate dataManagerDelegate:self shouldLockInterace:NO];
+    [self.delegate dataManagerDelegate:self shouldReload:YES];
 }
 
 - (void)persistentStoreDidImportUbiquitousContentChanges:(NSNotification *)changeNotification
 {
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+    [self.delegate dataManagerDelegate:self accessDataAllowed:NO];
+    [self.delegate dataManagerDelegate:self shouldLockInterace:YES];
+    [self.managedObjectContext mergeChangesFromContextDidSaveNotification:changeNotification];
+    [self.delegate dataManagerDelegate:self accessDataAllowed:NO];
+    [self.delegate dataManagerDelegate:self shouldLockInterace:NO];
+    [self.delegate dataManagerDelegate:self shouldReload:YES];
 }
 
 - (void)ubiquityIdentityDidChangeWithNotification:(NSNotification *)notification
@@ -249,6 +272,9 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
               addPersistentStoreError, [addPersistentStoreError userInfo]);
         abort();
     }
+    
+    // Register or re-register for notifications with the new persistent store coordinator.
+    [self registerForCloudNotificationsWithPersistentStoreCoordinator:persistentStoreCoordinator];
     
     // Output variables
     *persistentStoreCoordinatorOutput = persistentStoreCoordinator;
