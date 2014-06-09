@@ -64,6 +64,9 @@
 - (void)removeStorage
 {
     self.persistentStorageType = DCPersistentStorageTypeNone;
+    [self.managedObjectContext reset];
+    self.managedObjectContext = nil;
+    [self clearAllPersistentStoresAndPersistentStoreCoordinators];
 }
 
 - (void)addLocalStorage
@@ -88,23 +91,35 @@
 
 - (DCData *)insertDataItem
 {
-    DCData *data = [NSEntityDescription
-                    insertNewObjectForEntityForName:@"Data"
-                    inManagedObjectContext:self.managedObjectContext];
-    data.date = [NSDate date];
+    DCData *data = nil;
+    if (_managedObjectContext != nil) {
+        data = [NSEntityDescription
+                insertNewObjectForEntityForName:@"Data"
+                inManagedObjectContext:self.managedObjectContext];
+        data.date = [NSDate date];
+        NSError *saveError;
+        BOOL saveSuccess = [self.managedObjectContext save:&saveError];
+        if (!saveSuccess) {
+            NSLog(@"Failed to save with error: %@.", saveError);
+            abort();
+        }
+    }
     return data;
 }
 
 - (NSArray *)sortedData
 {
-    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Data"];
-    NSSortDescriptor *sortByDate = [NSSortDescriptor sortDescriptorWithKey:@"date" ascending:NO];
-    [fetchRequest setSortDescriptors:@[sortByDate]];
-    NSError *fetchExecutionError;
-    NSArray *results = [self.managedObjectContext executeFetchRequest:fetchRequest error:&fetchExecutionError];
-    if (results == nil) {
-        NSLog(@"Failed to execute fetch with error: %@.", fetchExecutionError);
-        abort();
+    NSArray *results = nil;
+    if (_managedObjectContext != nil) {
+        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Data"];
+        NSSortDescriptor *sortByDate = [NSSortDescriptor sortDescriptorWithKey:@"date" ascending:NO];
+        [fetchRequest setSortDescriptors:@[sortByDate]];
+        NSError *fetchExecutionError;
+        results = [self.managedObjectContext executeFetchRequest:fetchRequest error:&fetchExecutionError];
+        if (results == nil) {
+            NSLog(@"Failed to execute fetch with error: %@.", fetchExecutionError);
+            abort();
+        }
     }
     return results;
 }
@@ -232,5 +247,15 @@ persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordi
     return [[[NSFileManager defaultManager]
              URLsForDirectory:NSDocumentDirectory
              inDomains:NSUserDomainMask] lastObject];
+}
+
+- (void)clearAllPersistentStoresAndPersistentStoreCoordinators
+{
+    self.localPersistentStore = nil;
+    self.localPersistentStoreCoordinator = nil;
+    self.cloudPersistentStore = nil;
+    self.cloudPersistentStoreCoordinator = nil;
+    self.persistentStore = nil;
+    self.persistentStoreCoordinator = nil;
 }
 @end
