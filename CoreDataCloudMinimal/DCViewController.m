@@ -62,7 +62,7 @@
     BOOL usingCloudStorageBackend = (self.storageBackendSegmentedControl.selectedSegmentIndex == 1);
     self.userDefaults.usingCloudStorageBackend = usingCloudStorageBackend;
     [self setupStorageBackendSegmentedControl];
-    NSLog(@"%s allow:%@", __PRETTY_FUNCTION__, (usingCloudStorageBackend) ? @"YES" : @"NO");
+    NSLog(@"CLLI: %s allow:%@", __PRETTY_FUNCTION__, (usingCloudStorageBackend) ? @"YES" : @"NO");
 }
 
 - (IBAction)persistentStoreTypeSegmentedControlActionWithSender:(id)sender
@@ -70,7 +70,7 @@
     NSInteger selectedSegmentIndex = self.persistentStoreTypeSegmentedControl.selectedSegmentIndex;
     DCPersistentStorageType storageType = (DCPersistentStorageType)selectedSegmentIndex;
     [self applyStorageType:storageType];
-    NSLog(@"%s Change To:\"%@\"", __PRETTY_FUNCTION__, self.persistentStorageTypeDescription[@(storageType)]);
+    NSLog(@"CLLI: %s Change To:\"%@\"", __PRETTY_FUNCTION__, self.persistentStorageTypeDescription[@(storageType)]);
 }
 
 - (IBAction)accessDataButtonActionWithSender:(id)sender
@@ -116,19 +116,19 @@
 - (void)dataManagerDelegate:(DCDataManager *)dataManager
          shouldLockInterace:(BOOL)lockInterface
 {
-    NSLog(@"%s lockInterface:%@", __PRETTY_FUNCTION__, (lockInterface) ? @"YES" : @"NO");
+    NSLog(@"CLLI: %s lockInterface:%@", __PRETTY_FUNCTION__, (lockInterface) ? @"YES" : @"NO");
 }
 
 - (void)dataManagerDelegate:(DCDataManager *)dataManager
           accessDataAllowed:(BOOL)accessDataAllowed
 {
-    NSLog(@"%s accessDataAllowed:%@", __PRETTY_FUNCTION__, (accessDataAllowed) ? @"YES" : @"NO");
+    NSLog(@"CLLI: %s accessDataAllowed:%@", __PRETTY_FUNCTION__, (accessDataAllowed) ? @"YES" : @"NO");
 }
 
 - (void)dataManagerDelegate:(DCDataManager *)dataManager
                shouldReload:(BOOL)shouldReload
 {
-    NSLog(@"%s shouldReload:%@", __PRETTY_FUNCTION__, (shouldReload) ? @"YES" : @"NO");
+    NSLog(@"CLLI: %s shouldReload:%@", __PRETTY_FUNCTION__, (shouldReload) ? @"YES" : @"NO");
 }
 
 - (void)dataManagerDelegate:(DCDataManager *)dataManager
@@ -141,7 +141,7 @@
  didChangeUbiquityTokenFrom:(id)fromToken
             toUbiquityToken:(id)toToken
 {
-    NSLog(@"%s from:\"%@\" to:\"%@\"", __PRETTY_FUNCTION__, fromToken, toToken);
+    NSLog(@"CLLI: %s from:\"%@\" to:\"%@\"", __PRETTY_FUNCTION__, fromToken, toToken);
     NSInteger selectedSegmentIndex = (toToken == nil) ? 0 : 1;
     [self.systemCloudAccessSegmentedControl setSelectedSegmentIndex:selectedSegmentIndex];
 }

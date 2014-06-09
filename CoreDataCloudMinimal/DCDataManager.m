@@ -143,7 +143,7 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
         NSError *saveError;
         BOOL saveSuccess = [self.managedObjectContext save:&saveError];
         if (!saveSuccess) {
-            NSLog(@"Failed to save with error: %@.", saveError);
+            NSLog(@"CLLI: Failed to save with error: %@.", saveError);
             abort();
         }
     }
@@ -160,7 +160,7 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
         NSError *fetchExecutionError;
         results = [self.managedObjectContext executeFetchRequest:fetchRequest error:&fetchExecutionError];
         if (results == nil) {
-            NSLog(@"Failed to execute fetch with error: %@.", fetchExecutionError);
+            NSLog(@"CLLI: Failed to execute fetch with error: %@.", fetchExecutionError);
             abort();
         }
     }
@@ -228,19 +228,25 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
     self.registeredForNotificationUbiquitousIdentityDidChange = YES;
 }
 
+- (void)logPersistentStoreChangeWithUserInfo:(NSDictionary *)userInfo
+{
+    NSLog(@"CLLI: From: %@", userInfo[NSAddedPersistentStoresKey]);
+    NSLog(@"CLLI: To: %@", userInfo[NSRemovedPersistentStoresKey]);
+}
+
 - (void)storesWillChangeWithNotification:(NSNotification *)notification
 {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
-    NSLog(@"From: %@", notification.userInfo[NSAddedPersistentStoresKey]);
-    NSLog(@"To: %@", notification.userInfo[NSRemovedPersistentStoresKey]);
-    
+    NSLog(@"CLLI: %s", __PRETTY_FUNCTION__);
+    NSDictionary *userInfo = notification.userInfo;
+    [self logPersistentStoreChangeWithUserInfo:userInfo];
+    [self logTransitionTypeFromUserInfo:userInfo];
     [self.delegate dataManagerDelegate:self accessDataAllowed:NO];
     [self.delegate dataManagerDelegate:self shouldLockInterace:YES];
     if ([self.managedObjectContext hasChanges]) {
         NSError *saveError;
         BOOL saveSuccess = [self.managedObjectContext save:&saveError];
         if (!saveSuccess) {
-            NSLog(@"Failed to save with error: %@.", saveError);
+            NSLog(@"CLLI: Failed to save with error: %@.", saveError);
         }
     }
     [self.managedObjectContext reset];
@@ -248,7 +254,10 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
 
 - (void)storesDidChangeWithNotification:(NSNotification *)notification
 {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
+    NSLog(@"CLLI: %s", __PRETTY_FUNCTION__);
+    NSDictionary *userInfo = notification.userInfo;
+    [self logPersistentStoreChangeWithUserInfo:userInfo];
+    [self logTransitionTypeFromUserInfo:userInfo];
     [self.delegate dataManagerDelegate:self accessDataAllowed:YES];
     [self.delegate dataManagerDelegate:self shouldLockInterace:NO];
     [self.delegate dataManagerDelegate:self shouldReload:YES];
@@ -256,7 +265,7 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
 
 - (void)persistentStoreDidImportUbiquitousContentChanges:(NSNotification *)changeNotification
 {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
+    NSLog(@"CLLI: %s", __PRETTY_FUNCTION__);
     [self.delegate dataManagerDelegate:self accessDataAllowed:NO];
     [self.delegate dataManagerDelegate:self shouldLockInterace:YES];
     [self.managedObjectContext mergeChangesFromContextDidSaveNotification:changeNotification];
@@ -276,6 +285,7 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
     if (_managedObjectContext == nil) {
         _managedObjectContext = [[NSManagedObjectContext alloc]
                                  initWithConcurrencyType:NSMainQueueConcurrencyType];
+        [_managedObjectContext setMergePolicy:NSMergeByPropertyObjectTrumpMergePolicy];
     }
     return _managedObjectContext;
 }
@@ -304,7 +314,7 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
                        addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL
                        options:options error:&addPersistentStoreError];
     if (persistentStore == nil) {
-        NSLog(@"When adding store to local persistent store coordinator, got error %@, with user info %@",
+        NSLog(@"CLLI: When adding store to local persistent store coordinator, got error %@, with user info %@",
               addPersistentStoreError, [addPersistentStoreError userInfo]);
         abort();
     }
@@ -340,7 +350,7 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
                        addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL
                        options:options error:&addPersistentStoreError];
     if (persistentStore == nil) {
-        NSLog(@"When adding store to cloud persistent store coordinator, got error %@, with user info %@",
+        NSLog(@"CLLI: When adding store to cloud persistent store coordinator, got error %@, with user info %@",
               addPersistentStoreError, [addPersistentStoreError userInfo]);
         abort();
     }
@@ -369,7 +379,7 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
             NSString *message = [NSString stringWithFormat:@"Did not find any manage object "
                                  "model in bundle with identifier %@.",
                                  mainBundle.bundleIdentifier];
-            NSLog(@"%@", message);
+            NSLog(@"CLLI: %@", message);
             NSAssert(NO, message);
         }
         _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
@@ -402,7 +412,7 @@ persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordi
     self.localPersistentStoreCoordinator = persistentStoreCoordinator;
     self.localPersistentStore = persistentStore;
     [self setPersistentStore:persistentStore persistentStoreCoordinator:persistentStoreCoordinator];
-    NSLog(@"Local persistent store: %@", persistentStore.URL);
+    NSLog(@"CLLI: Local persistent store: %@", persistentStore.URL);
 }
 
 #pragma mark Cloud Persistent Store
@@ -422,7 +432,7 @@ persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordi
     self.cloudPersistentStoreCoordinator = persistentStoreCoordinator;
     self.cloudPersistentStore = persistentStore;
     [self setPersistentStore:persistentStore persistentStoreCoordinator:persistentStoreCoordinator];
-    NSLog(@"Cloud persistent store: %@", persistentStore.URL);
+    NSLog(@"CLLI: Cloud persistent store: %@", persistentStore.URL);
 }
 
 #pragma mark - Internal Helper Methods
@@ -458,6 +468,28 @@ persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordi
     NSFileManager *fileManager = [NSFileManager defaultManager];
     id nextUbiquityIdentity = [fileManager ubiquityIdentityToken];
     [self.delegate dataManagerDelegate:self didChangeUbiquityTokenFrom:previousUbiquityIdentity toUbiquityToken:nextUbiquityIdentity];
-    self.userDefaults.storedAccessIdentity = nextUbiquityIdentity;    
+    self.userDefaults.storedAccessIdentity = nextUbiquityIdentity;
+}
+
+
+- (void)logTransitionTypeFromUserInfo:(NSDictionary *)userInfo
+{
+    NSNumber *transitionKeyNumber = userInfo[NSPersistentStoreUbiquitousTransitionTypeKey];
+    if (transitionKeyNumber != nil) {
+        switch (transitionKeyNumber.unsignedIntegerValue) {
+            case NSPersistentStoreUbiquitousTransitionTypeAccountAdded:
+                NSLog(@"CLLI: Transition type: Account Added");
+                break;
+            case NSPersistentStoreUbiquitousTransitionTypeAccountRemoved:
+                NSLog(@"CLLI: Transition type: Account Removed");
+                break;
+            case NSPersistentStoreUbiquitousTransitionTypeContentRemoved:
+                NSLog(@"CLLI: Transition type: Content Removed");
+                break;
+            case NSPersistentStoreUbiquitousTransitionTypeInitialImportCompleted:
+                NSLog(@"CLLI: Transition type: Import Completed");
+                break;
+        }
+    }
 }
 @end
