@@ -83,16 +83,10 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
         NSUInteger availableStorageTypes = (DCStorageTypeLocal | DCStorageTypeCloud);
         [self.delegate coreDataManager:self didRequestStorageTypeFrom:availableStorageTypes
                             usingBlock:^(DCStorageType selectedStorageType) {
-                                if (selectedStorageType == DCStorageTypeLocal) {
-                                    [weakSelf addLocalStorage];
-                                } else {
-                                    [weakSelf addCloudStorage];
-                                }
-                                [self.delegate coreDataManager:weakSelf
-                                             didAddStorageType:selectedStorageType];
+                                [weakSelf addStoreWithStorageType:selectedStorageType];
                             }];
     } else {
-        [self addLocalStorage];
+        [self addLocalStore];
         [self.delegate coreDataManager:self didAddStorageType:DCStorageTypeLocal];
     }
 }
@@ -133,7 +127,7 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
 }
 
 #pragma mark - Add Remove Storage Methods
-- (void)removeStorage
+- (void)removeStore
 {
     self.storageType = DCStorageTypeNone;
     [self.managedObjectContext reset];
@@ -141,12 +135,22 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
     [self clearAllPersistentStoresAndPersistentStoreCoordinators];
 }
 
-- (void)addLocalStorage
+- (void)addStoreWithStorageType:(DCStorageType)storageType
+{
+    if (storageType == DCStorageTypeLocal) {
+        [self addLocalStore];
+    } else {
+        [self addCloudStore];
+    }
+    [self.delegate coreDataManager:self didAddStorageType:storageType];
+}
+
+- (void)addLocalStore
 {
     if (self.storageType != DCStorageTypeLocal) {
         [self.managedObjectContext reset];
         if (self.storageType == DCStorageTypeCloud) {
-            [self removeCloudStorage];
+            [self removeCloudStore];
         }
         [self setupLocalPersistentStore];
         self.managedObjectContext = nil;
@@ -155,7 +159,7 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
     }
 }
 
-- (void)removeLocalStorage
+- (void)removeLocalStore
 {
     NSError *removePersistentStoreError;
     [self.localPersistentStoreCoordinator
@@ -163,12 +167,12 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
      error:&removePersistentStoreError];
 }
 
-- (void)addCloudStorage
+- (void)addCloudStore
 {
     if (self.storageType != DCStorageTypeCloud) {
         [self.managedObjectContext reset];
         if (self.storageType == DCStorageTypeLocal) {
-            [self removeLocalStorage];
+            [self removeLocalStore];
         }
         [self setupCloudPersistentStore];
         self.managedObjectContext = nil;
@@ -177,7 +181,7 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
     }
 }
 
-- (void)removeCloudStorage
+- (void)removeCloudStore
 {
     NSError *removePersistentStoreError;
     [self.cloudPersistentStoreCoordinator
