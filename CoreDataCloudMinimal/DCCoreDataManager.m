@@ -234,9 +234,9 @@ didReceiveStoresWillChangeNotification:(NSNotification *)notification
                     abort();
                 }
             }];
-             [weakSelf.managedObjectContext performBlockAndWait:^{
-                 [weakSelf.managedObjectContext reset];
-             }];
+            [weakSelf.managedObjectContext performBlockAndWait:^{
+                [weakSelf.managedObjectContext reset];
+            }];
         });
     }
 }
@@ -317,11 +317,11 @@ didReceiveContentImportNotification:(NSNotification *)notification
     // Create coordinator with managed object model.
     persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc]
                                   initWithManagedObjectModel:self.managedObjectModel];
-
+    
     // Register for notifications for ubiquity identity and storage.
     [self unregisterForAllEvents];
     [self registerForAllEventsWithPersistentStoreCoordinator:persistentStoreCoordinator];
-
+    
     // Create coordinator with persistent store.
     NSDictionary *options = [self cloudPersistentStoreCoordinatorOptions];
     
@@ -433,19 +433,7 @@ persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordi
                                 [weakSelf addStoreWithStorageType:selectedStorageType];
                             }];
     } else {
-        switch (self.storageType) {
-            case DCStorageTypeNone:
-                if (localStoreAsDefault) {
-                    [self addStoreWithStorageType:DCStorageTypeLocal];
-                }
-                break;
-            case DCStorageTypeLocal:
-                [self addStoreWithStorageType:DCStorageTypeLocal];
-                break;
-            case DCStorageTypeCloud:
-                [self addStoreWithStorageType:DCStorageTypeCloud];
-                break;
-        }
+        [self addStoreWithStorageType:self.userDefaults.storageType];
     }
 }
 
@@ -492,7 +480,8 @@ persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordi
     BOOL shouldAskDelegate;
     BOOL hasCloudAccess = self.fileManager.ubiquityIdentityToken;
     BOOL hasAskedForCloudStorage = self.userDefaults.hasAskedForCloudStorage;
-    switch (self.storageType) {
+    DCStorageType savedStorageType = self.userDefaults.storageType;
+    switch (savedStorageType) {
         case DCStorageTypeNone:
             shouldAskDelegate = hasCloudAccess;
             break;
