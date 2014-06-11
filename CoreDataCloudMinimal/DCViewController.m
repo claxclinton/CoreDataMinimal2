@@ -85,23 +85,15 @@ didRequestStorageTypeFrom:(NSUInteger)availableStorageTypes
              usingBlock:(void (^)(DCStorageType selectedStorageType))block;
 {
     self.storageTypeBlock = block;
-    BOOL storageTypeCloudAvailable = (availableStorageTypes & DCStorageTypeCloud);
+    NSAssert((availableStorageTypes & DCStorageTypeLocal), @"Local storage should always be an option.");
+    NSAssert((availableStorageTypes & DCStorageTypeCloud), @"Cloud storage is the reason for asking.");
     UIAlertView *alertView;
-    if (storageTypeCloudAvailable) {
-        NSString *title = @"Select Storage";
-        NSString *message = @"Select Local or iCloud storage. This can only be done once, "
-        "and any existing data from a local store will not be migrated to iCloud.";
-        alertView = [[UIAlertView alloc]
-                     initWithTitle:title message:message delegate:self
-                     cancelButtonTitle:nil otherButtonTitles:@"Local", @"iCloud", nil];
-        [alertView show];
-    } else {
-        NSString *title = @"Local Storage";
-        NSString *message = @"Local storage has been selected since iCloud is not availble";
-        alertView = [[UIAlertView alloc]
-                     initWithTitle:title message:message delegate:self
-                     cancelButtonTitle:@"Cancel" otherButtonTitles:nil];
-    }
+    NSString *title = @"Select Storage";
+    NSString *message = @"Select Local or iCloud storage. This can only be done once, "
+    "and any existing data from a local store will not be migrated to iCloud.";
+    alertView = [[UIAlertView alloc]
+                 initWithTitle:title message:message delegate:self
+                 cancelButtonTitle:nil otherButtonTitles:@"Local", @"iCloud", nil];
     [alertView show];
 }
 
@@ -120,10 +112,12 @@ didRequestStorageTypeFrom:(NSUInteger)availableStorageTypes
 
 - (void)coreDataManager:(DCCoreDataManager *)coreDataManager
 didChangeUbiquitousIdentityTo:(id)ubiquitousIdentity
+  availableStorageTypes:(NSUInteger)availableStorageTypes
 requestStorageTypeBlock:(void (^)(DCStorageType selectedStorageType))block
 {
+    NSAssert((availableStorageTypes & DCStorageTypeLocal), @"Local storage should always be an option.");
     UIAlertView *alertView;
-    BOOL onlyAccessToLocal = (ubiquitousIdentity == nil);
+    BOOL onlyAccessToLocal = ((availableStorageTypes & DCStorageTypeLocal) == 0);
     if (onlyAccessToLocal) {
         NSString *title = @"No Access To iCloud";
         NSString *message = @"The app does not have access to iCloud. "

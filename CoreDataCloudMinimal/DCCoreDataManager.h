@@ -22,6 +22,7 @@ didRequestStorageTypeFrom:(NSUInteger)availableStorageTypes
      didAllowDataAccess:(BOOL)dataAccessAllowed;
 - (void)coreDataManager:(DCCoreDataManager *)coreDataManager
 didChangeUbiquitousIdentityTo:(id)ubiquitousIdentity
+  availableStorageTypes:(NSUInteger)availableStorageTypes
 requestStorageTypeBlock:(void (^)(DCStorageType selectedStorageType))block;
 @end
 
