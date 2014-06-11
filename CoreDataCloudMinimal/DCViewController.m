@@ -117,8 +117,15 @@ requestStorageTypeBlock:(void (^)(DCStorageType selectedStorageType))block
 {
     NSAssert((availableStorageTypes & DCStorageTypeLocal), @"Local storage should always be an option.");
     UIAlertView *alertView;
-    BOOL onlyAccessToLocal = ((availableStorageTypes & DCStorageTypeLocal) == 0);
-    if (onlyAccessToLocal) {
+    BOOL cloudStorageTypeAvailable = (availableStorageTypes & DCStorageTypeCloud);
+    if (cloudStorageTypeAvailable) {
+        NSString *title = @"iCloud Account Changed";
+        NSString *message = @"You can now choose to use the local data, "
+        "or the data from the new iCloud account.";
+        alertView = [[UIAlertView alloc]
+                     initWithTitle:title message:message delegate:self
+                     cancelButtonTitle:nil otherButtonTitles:@"Local", @"iCloud", nil];
+    } else {
         NSString *title = @"No Access To iCloud";
         NSString *message = @"The app does not have access to iCloud. "
         "Please log in to iCloud and make sure that the app has access to Document and data. "
@@ -126,13 +133,6 @@ requestStorageTypeBlock:(void (^)(DCStorageType selectedStorageType))block
         alertView = [[UIAlertView alloc]
                      initWithTitle:title message:message delegate:self
                      cancelButtonTitle:@"Cancel" otherButtonTitles:nil];
-    } else {
-        NSString *title = @"iCloud Account Changed";
-        NSString *message = @"You can now choose to use the local data, "
-        "or the data from the new iCloud account.";
-        alertView = [[UIAlertView alloc]
-                     initWithTitle:title message:message delegate:self
-                     cancelButtonTitle:nil otherButtonTitles:@"Local", @"iCloud", nil];
     }
     [alertView show];
 }

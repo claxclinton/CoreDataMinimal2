@@ -89,7 +89,7 @@ DCStorageChangeEventsManagerDelegate>
                                 [weakSelf addStoreWithStorageType:selectedStorageType];
                             }];
     } else {
-        DCStorageType nextStorageType = self.storageType;
+        DCStorageType nextStorageType = self.userDefaults.storageType;
         if (nextStorageType == DCStorageTypeNone) {
             nextStorageType = DCStorageTypeLocal;
         }
