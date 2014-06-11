@@ -60,7 +60,7 @@ static NSString * const DCStoreNameCloud = @"ModelStorage-Cloud.sqlite";
     if (self != nil) {
         self.modelName = modelName;
         self.delegate = delegate;
-        self.storageType = DCStorageTypeNone;
+        self.userDefaults.storageType = DCStorageTypeNone;
         self.sharedServices = [DCSharedServices sharedServices];
         self.userDefaults = self.sharedServices.userDefaults;
         self.fileManager = [NSFileManager defaultManager];
@@ -131,15 +131,15 @@ static NSString * const DCStoreNameCloud = @"ModelStorage-Cloud.sqlite";
 
 - (void)addLocalStore
 {
-    if (self.storageType != DCStorageTypeLocal) {
+    if (self.userDefaults.storageType != DCStorageTypeLocal) {
         [self.managedObjectContext reset];
-        if (self.storageType == DCStorageTypeCloud) {
+        if (self.userDefaults.storageType == DCStorageTypeCloud) {
             [self removeCloudStore];
         }
         [self setupLocalPersistentStore];
         self.managedObjectContext = nil;
         self.managedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator;
-        self.storageType = DCStorageTypeLocal;
+        self.userDefaults.storageType = DCStorageTypeLocal;
     }
 }
 
@@ -153,15 +153,15 @@ static NSString * const DCStoreNameCloud = @"ModelStorage-Cloud.sqlite";
 
 - (void)addCloudStore
 {
-    if (self.storageType != DCStorageTypeCloud) {
+    if (self.userDefaults.storageType != DCStorageTypeCloud) {
         [self.managedObjectContext reset];
-        if (self.storageType == DCStorageTypeLocal) {
+        if (self.userDefaults.storageType == DCStorageTypeLocal) {
             [self removeLocalStore];
         }
         [self setupCloudPersistentStore];
         self.managedObjectContext = nil;
         self.managedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator;
-        self.storageType = DCStorageTypeCloud;
+        self.userDefaults.storageType = DCStorageTypeCloud;
     }
 }
 
@@ -194,7 +194,7 @@ static NSString * const DCStoreNameCloud = @"ModelStorage-Cloud.sqlite";
                      toIdentity:(id <NSObject, NSCopying, NSCoding>)toIdentity
 {
     [self setDataAccessAllowed:NO updateDelegateIfChange:YES updateDelegateForced:NO];
-    if (self.storageType == DCStorageTypeCloud) {
+    if (self.userDefaults.storageType == DCStorageTypeCloud) {
         __weak typeof(self)weakSelf = self;
         [self.delegate coreDataManager:self
          didChangeUbiquitousIdentityTo:toIdentity
@@ -412,12 +412,6 @@ persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordi
 }
 
 #pragma mark - Internal Helper Methods
-- (void)setStorageType:(DCStorageType)storageType
-{
-    _storageType = storageType;
-    self.userDefaults.persistentStorageType = storageType;
-}
-
 - (void)addPersistentStoreWithLocalStoreAsDefault:(BOOL)localStoreAsDefault
 {
     [self setDataAccessAllowed:NO updateDelegateIfChange:YES updateDelegateForced:NO];
@@ -431,8 +425,18 @@ persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordi
                                 [weakSelf addStoreWithStorageType:selectedStorageType];
                             }];
     } else {
-        if (localStoreAsDefault) {
-            [self addStoreWithStorageType:DCStorageTypeLocal];
+        switch (self.userDefaults.storageType) {
+            case DCStorageTypeNone:
+                if (localStoreAsDefault) {
+                    [self addStoreWithStorageType:DCStorageTypeLocal];
+                }
+                break;
+            case DCStorageTypeLocal:
+                [self addStoreWithStorageType:DCStorageTypeLocal];
+                break;
+            case DCStorageTypeCloud:
+                [self addStoreWithStorageType:DCStorageTypeCloud];
+                break;
         }
     }
 }
@@ -480,7 +484,7 @@ persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordi
     BOOL shouldAskDelegate;
     BOOL hasCloudAccess = self.fileManager.ubiquityIdentityToken;
     BOOL hasAskedForCloudStorage = self.userDefaults.hasAskedForCloudStorage;
-    switch (self.userDefaults.persistentStorageType) {
+    switch (self.userDefaults.storageType) {
         case DCStorageTypeNone:
             shouldAskDelegate = hasCloudAccess;
             break;

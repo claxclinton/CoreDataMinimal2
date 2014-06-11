@@ -13,7 +13,7 @@
 @property (readonly, nonatomic) BOOL persistentStore;
 @property (strong, nonatomic) id <NSObject, NSCopying, NSCoding> storedAccessIdentity;
 @property (strong, nonatomic) NSString *questionnaireIdentity;
-@property (assign, nonatomic) DCStorageType persistentStorageType;
+@property (assign, nonatomic) DCStorageType storageType;
 @property (assign, nonatomic) BOOL hasAskedForCloudStorage;
 
 + (instancetype)userDefaultsWithPersistentStore:(BOOL)persistentStore;

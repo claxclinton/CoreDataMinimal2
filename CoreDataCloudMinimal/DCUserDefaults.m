@@ -22,7 +22,7 @@ NSString * const DCHasAskedForCloudStorageKey = @"com.lillysoft.DailyCheck.hasAs
 @synthesize storedAccessIdentity = _storedAccessIdentity;
 @synthesize questionnaireIdentity = _questionnaireIdentity;
 @synthesize persistentStore = _persistentStore;
-@synthesize persistentStorageType = _persistentStorageType;
+@synthesize storageType = _storageType;
 @synthesize hasAskedForCloudStorage = _hasAskedForCloudStorage;
 
 #pragma mark - Create And Init
@@ -89,18 +89,18 @@ NSString * const DCHasAskedForCloudStorageKey = @"com.lillysoft.DailyCheck.hasAs
     [self.userDefaults synchronize];
 }
 
-- (DCStorageType)persistentStorageType
+- (DCStorageType)storageType
 {
     if (self.persistentStore) {
         NSNumber *persistentStorageTypeNumber = [self.userDefaults objectForKey:DCPersistentStorageTypeKey];
-        _persistentStorageType = persistentStorageTypeNumber.unsignedIntegerValue;
+        _storageType = persistentStorageTypeNumber.unsignedIntegerValue;
     }
-    return _persistentStorageType;
+    return _storageType;
 }
 
-- (void)setPersistentStorageType:(DCStorageType)persistentStorageType
+- (void)setStorageType:(DCStorageType)persistentStorageType
 {
-    _persistentStorageType = persistentStorageType;
+    _storageType = persistentStorageType;
     [self.userDefaults setObject:@(persistentStorageType) forKey:DCPersistentStorageTypeKey];
     [self.userDefaults synchronize];
 }
