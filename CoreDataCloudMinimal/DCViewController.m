@@ -13,7 +13,9 @@
 #import "DCDataTableViewController.h"
 #import "DCUbiquityIdentityManager.h"
 
-@interface DCViewController () <DCCoreDataManagerDelegate, DCUbiquityIdentityManagerDelegate>
+@interface DCViewController () <DCCoreDataManagerDelegate,
+                                DCUbiquityIdentityManagerDelegate,
+                                UIAlertViewDelegate>
 @property (strong, nonatomic) IBOutlet UISegmentedControl *cloudAccessStatusSegmentedControl;
 @property (strong, nonatomic) IBOutlet UISegmentedControl *persistentStoreStatusSegmentedControl;
 @property (strong, nonatomic) IBOutlet UISegmentedControl *launchStateStatusSegmentedControl;
@@ -21,11 +23,11 @@
 @property (strong, nonatomic) IBOutlet UIButton *accessDataButton;
 @property (strong, nonatomic) DCCoreDataManager *coreDataManager;
 @property (assign, nonatomic) DCStorageType storageType;
-@property (assign, nonatomic) NSUInteger availableStorageTypes;
 @property (strong, nonatomic) NSDictionary *persistentStorageTypeDescription;
 @property (strong, nonatomic) DCSharedServices *sharedServices;
 @property (strong, nonatomic) DCUserDefaults *userDefaults;
 @property (strong, nonatomic) DCUbiquityIdentityManager *ubiquityIdentityManager;
+@property (copy, nonatomic) void (^storageTypeBlock)(DCStorageType type);
 @end
 
 @implementation DCViewController
@@ -39,7 +41,6 @@
                                               @(DCStorageTypeLocal): @"Local Persistent Store",
                                               @(DCStorageTypeCloud): @"Cloud Persistent Store"};
     self.userDefaults = self.sharedServices.userDefaults;
-    self.availableStorageTypes = DCStorageTypeNone;
     self.ubiquityIdentityManager = self.sharedServices.ubiquityIdentityManager;
     [self.ubiquityIdentityManager addDelegate:self];
     [self setupCloudAccessStatusSegmentedControl];
@@ -78,10 +79,27 @@
 
 #pragma mark - Core Data Manager Delegate
 - (void)coreDataManager:(DCCoreDataManager *)coreDataManager
-didRequestStorageTypeUsingBlock:(DCStorageType (^)(void))block
-       fromStorageTypes:(NSUInteger)availableStorageTypes;
+didRequestStorageTypeFrom:(NSUInteger)availableStorageTypes
+             usingBlock:(void (^)(DCStorageType selectedStorageType))block;
 {
-    self.availableStorageTypes = availableStorageTypes;
+    self.storageTypeBlock = block;
+    BOOL storageTypeCloudAvailable = (availableStorageTypes & DCStorageTypeCloud);
+    if (storageTypeCloudAvailable) {
+        NSString *title = @"Select Storage";
+        NSString *message = @"Select Local or iCloud storage. This can only be done once, "
+        "and any existing data from a local store will not be migrated to iCloud.";
+        UIAlertView *alertView = [[UIAlertView alloc]
+                                  initWithTitle:title message:message delegate:self
+                                  cancelButtonTitle:nil otherButtonTitles:@"Local", @"iCloud", nil];
+        [alertView show];
+    } else {
+        NSString *title = @"Local Storage";
+        NSString *message = @"Local storage has been selected since iCloud is not availble";
+        UIAlertView *alertView = [[UIAlertView alloc]
+                                  initWithTitle:title message:message delegate:self
+                                  cancelButtonTitle:@"Cancel" otherButtonTitles:nil];
+        [alertView show];
+    }
 }
 
 - (void)coreDataManager:(DCCoreDataManager *)coreDataManager
@@ -93,7 +111,21 @@ didRequestStorageTypeUsingBlock:(DCStorageType (^)(void))block
 - (void)coreDataManager:(DCCoreDataManager *)coreDataManager
      didAllowDataAccess:(BOOL)dataAccessAllowed
 {
-    
+    self.activateCoreDataButton.enabled = NO;
+}
+
+#pragma mark - Alert View Delegate
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (alertView.numberOfButtons == 1) {
+        self.storageTypeBlock(DCStorageTypeLocal);
+    } else {
+        if (buttonIndex == 0) {
+            self.storageTypeBlock(DCStorageTypeLocal);
+        } else {
+            self.storageTypeBlock(DCStorageTypeCloud);
+        }
+    }
 }
 
 #pragma mark - UI Setup Methods
