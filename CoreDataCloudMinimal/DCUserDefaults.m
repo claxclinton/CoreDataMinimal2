@@ -105,7 +105,7 @@ NSString * const DCPersistentStorageTypeKey = @"com.lillysoft.DailyCheck.persist
     [self.userDefaults synchronize];
 }
 
-- (DCPersistentStorageType)persistentStorageType
+- (DCStorageType)persistentStorageType
 {
     if (self.persistentStore) {
         NSNumber *persistentStorageTypeNumber = [self.userDefaults objectForKey:DCPersistentStorageTypeKey];
@@ -114,7 +114,7 @@ NSString * const DCPersistentStorageTypeKey = @"com.lillysoft.DailyCheck.persist
     return _persistentStorageType;
 }
 
-- (void)setPersistentStorageType:(DCPersistentStorageType)persistentStorageType
+- (void)setPersistentStorageType:(DCStorageType)persistentStorageType
 {
     _persistentStorageType = persistentStorageType;
     [self.userDefaults setObject:@(persistentStorageType) forKey:DCPersistentStorageTypeKey];

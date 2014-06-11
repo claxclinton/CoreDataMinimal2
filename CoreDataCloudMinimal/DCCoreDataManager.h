@@ -7,15 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "DCStorageType.h"
 
 @class DCCoreDataManager;
 @class DCData;
-
-typedef NS_ENUM(NSUInteger, DCStorageType) {
-    DCStorageTypeNone = 0,
-    DCStorageTypeLocal,
-    DCStorageTypeCloud
-};
 
 @protocol DCCoreDataManagerDelegate <NSObject>
 - (void)coreDataManager:(DCCoreDataManager *)coreDataManager

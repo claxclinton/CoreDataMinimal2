@@ -53,6 +53,7 @@
 		4B4A90221942D06A005ADA9B /* DCCoreDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DCCoreDataManager.m; sourceTree = "<group>"; };
 		4B50A67919486545007770D2 /* DCUbiquityIdentityManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCUbiquityIdentityManager.h; sourceTree = "<group>"; };
 		4B50A67A19486545007770D2 /* DCUbiquityIdentityManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DCUbiquityIdentityManager.m; sourceTree = "<group>"; };
+		4B50A67C19486B8F007770D2 /* DCStorageType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DCStorageType.h; sourceTree = "<group>"; };
 		4BC0D24419407D8B00E2142B /* CoreDataCloudMinimal2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoreDataCloudMinimal2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BC0D24719407D8B00E2142B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		4BC0D24919407D8B00E2142B /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -143,6 +144,7 @@
 				4BC0D26019407D8B00E2142B /* DCViewController.m */,
 				4BC0D27F1940820900E2142B /* DCDataTableViewController.h */,
 				4BC0D2801940820900E2142B /* DCDataTableViewController.m */,
+				4B50A67C19486B8F007770D2 /* DCStorageType.h */,
 				4B4A90211942D06A005ADA9B /* DCCoreDataManager.h */,
 				4B4A90221942D06A005ADA9B /* DCCoreDataManager.m */,
 				4B50A67919486545007770D2 /* DCUbiquityIdentityManager.h */,

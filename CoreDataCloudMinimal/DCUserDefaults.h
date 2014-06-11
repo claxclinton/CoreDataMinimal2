@@ -7,12 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "DCStorageType.h"
 
 @interface DCUserDefaults : NSObject
 @property (readonly, nonatomic) BOOL persistentStore;
-@property (strong, nonatomic) id <NSObject, NSCopying, NSCoding> ubiquityIdentity;
+@property (strong, nonatomic) id <NSObject, NSCopying, NSCoding> storedAccessIdentity;
 @property (strong, nonatomic) NSString *questionnaireIdentity;
 @property (assign, nonatomic) BOOL usingCloudStorageBackend;
+@property (assign, nonatomic) DCStorageType persistentStorageType;
 
 + (instancetype)userDefaultsWithPersistentStore:(BOOL)persistentStore;
 @end
