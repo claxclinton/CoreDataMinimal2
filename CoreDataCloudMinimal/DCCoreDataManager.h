@@ -27,9 +27,7 @@ didChangeUbiquitousIdentityTo:(id)ubiquitousIdentity;
 @interface DCCoreDataManager : NSObject
 + (instancetype)dataManagerWithModelName:(NSString *)modelName
                                 delegate:(id <DCCoreDataManagerDelegate>)delegate;
-- (void)activate;
 - (void)addPersistentStore;
-- (BOOL)hasAskedForCloudStorage;
 - (DCData *)insertDataItem;
 - (NSArray *)sortedData;
 @end

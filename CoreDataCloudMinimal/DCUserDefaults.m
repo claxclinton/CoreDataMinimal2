@@ -10,8 +10,8 @@
 
 NSString * const DCUbiquityIdentityTokenKey = @"com.lillysoft.DailyCheck.ubiquityIdentityToken";
 NSString * const DCQuestionnaireIdentityKey = @"com.lillysoft.DailyCheck.questionnaireIdentity";
-NSString * const DCAppCloudAccessAllowedKey = @"com.lillysoft.DailyCheck.appCloudAccessAllowed";
 NSString * const DCPersistentStorageTypeKey = @"com.lillysoft.DailyCheck.persistentStorageType";
+NSString * const DCHasAskedForCloudStorageKey = @"com.lillysoft.DailyCheck.hasAskedForCloudStorage";
 
 @interface DCUserDefaults ()
 @property (strong, nonatomic) NSUserDefaults *userDefaults;
@@ -22,8 +22,8 @@ NSString * const DCPersistentStorageTypeKey = @"com.lillysoft.DailyCheck.persist
 @synthesize storedAccessIdentity = _storedAccessIdentity;
 @synthesize questionnaireIdentity = _questionnaireIdentity;
 @synthesize persistentStore = _persistentStore;
-@synthesize usingCloudStorageBackend = _usingCloudStorageBackend;
 @synthesize persistentStorageType = _persistentStorageType;
+@synthesize hasAskedForCloudStorage = _hasAskedForCloudStorage;
 
 #pragma mark - Create And Init
 + (instancetype)userDefaultsWithPersistentStore:(BOOL)persistentStore
@@ -89,22 +89,6 @@ NSString * const DCPersistentStorageTypeKey = @"com.lillysoft.DailyCheck.persist
     [self.userDefaults synchronize];
 }
 
-- (BOOL)usingCloudStorageBackend
-{
-    if (self.persistentStore) {
-        NSNumber *appCloudAccessAllowedNumber = [self.userDefaults objectForKey:DCAppCloudAccessAllowedKey];
-        _usingCloudStorageBackend = appCloudAccessAllowedNumber.boolValue;
-    }
-    return _usingCloudStorageBackend;
-}
-
-- (void)setUsingCloudStorageBackend:(BOOL)appCloudAccessAllowed
-{
-    _usingCloudStorageBackend = appCloudAccessAllowed;
-    [self.userDefaults setObject:@(appCloudAccessAllowed) forKey:DCAppCloudAccessAllowedKey];
-    [self.userDefaults synchronize];
-}
-
 - (DCStorageType)persistentStorageType
 {
     if (self.persistentStore) {
@@ -118,6 +102,22 @@ NSString * const DCPersistentStorageTypeKey = @"com.lillysoft.DailyCheck.persist
 {
     _persistentStorageType = persistentStorageType;
     [self.userDefaults setObject:@(persistentStorageType) forKey:DCPersistentStorageTypeKey];
+    [self.userDefaults synchronize];
+}
+
+- (BOOL)hasAskedForCloudStorage
+{
+    if (self.persistentStore) {
+        NSNumber *hasAskedForCloudStorageNumber = [self.userDefaults objectForKey:DCHasAskedForCloudStorageKey];
+        _hasAskedForCloudStorage = hasAskedForCloudStorageNumber.boolValue;
+    }
+    return _hasAskedForCloudStorage;
+}
+
+- (void)setHasAskedForCloudStorage:(BOOL)hasAskedForCloudStorage
+{
+    _hasAskedForCloudStorage = hasAskedForCloudStorage;
+    [self.userDefaults setObject:@(hasAskedForCloudStorage) forKey:DCHasAskedForCloudStorageKey];
     [self.userDefaults synchronize];
 }
 @end

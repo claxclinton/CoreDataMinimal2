@@ -70,6 +70,7 @@
 #pragma mark - User Actions
 - (IBAction)activateCoreDataButtonActionWithSender:(id)sender
 {
+    [self.coreDataManager activate];
 }
 
 - (IBAction)accessDataButtonActionWithSender:(id)sender
@@ -154,7 +155,7 @@ didChangeUbiquitousIdentityTo:(id)ubiquitousIdentity
 
 - (void)setupCloudQuestionStatusSegmentedControl
 {
-    NSInteger segmentIndex = ([self.coreDataManager hasAskedForCloudStorage]) ? 1 : 0;
+    NSInteger segmentIndex = ([self.userDefaults.hasAskedForCloudStorage]) ? 1 : 0;
     [self.cloudAccessStatusSegmentedControl setSelectedSegmentIndex:segmentIndex];
 }
 

@@ -30,6 +30,7 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
 @property (strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 @property (strong, nonatomic) NSManagedObjectModel *managedObjectModel;
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
+@property (strong, nonatomic) NSFileManager *fileManager;
 @end
 
 @interface DCCoreDataManager ()
@@ -60,8 +61,7 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
         self.storageType = DCStorageTypeNone;
         self.sharedServices = [DCSharedServices sharedServices];
         self.userDefaults = self.sharedServices.userDefaults;
-        [self registerForUbiquityIdentityChanges];
-        [self registerForStorageChangeEvents];
+        self.fileManager = [NSFileManager defaultManager];
     }
     return self;
 }
@@ -73,17 +73,28 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
 }
 
 #pragma mark - Public Methods
-- (void)activate
-{
-}
-
 - (void)addPersistentStore
 {
-}
-
-- (BOOL)hasAskedForCloudStorage
-{
-    return self.askedForCloudStorage;
+    [self registerForUbiquityIdentityChanges];
+    [self registerForStorageChangeEvents];
+    BOOL shouldAskDelegate = [self shouldAskDelegateForStorageType];
+    if (shouldAskDelegate) {
+        __weak typeof(self)weakSelf = self;
+        NSUInteger availableStorageTypes = (DCStorageTypeLocal | DCStorageTypeCloud);
+        [self.delegate coreDataManager:self didRequestStorageTypeFrom:availableStorageTypes
+                            usingBlock:^(DCStorageType selectedStorageType) {
+                                if (selectedStorageType == DCStorageTypeLocal) {
+                                    [weakSelf addLocalStorage];
+                                } else {
+                                    [weakSelf addCloudStorage];
+                                }
+                                [self.delegate coreDataManager:weakSelf
+                                             didAddStorageType:selectedStorageType];
+                            }];
+    } else {
+        [self addLocalStorage];
+        [self.delegate coreDataManager:self didAddStorageType:DCStorageTypeLocal];
+    }
 }
 
 - (DCData *)insertDataItem
@@ -438,5 +449,30 @@ persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordi
                 break;
         }
     }
+}
+
+
+- (BOOL)shouldAskDelegateForStorageType
+{
+    BOOL shouldAskDelegate;
+    BOOL hasCloudAccess = [self ubiquityIdentityToken];
+    BOOL hasAskedForCloudStorage = self.userDefaults.hasAskedForCloudStorage;
+    switch (self.userDefaults.persistentStorageType) {
+        case DCStorageTypeNone:
+            shouldAskDelegate = hasCloudAccess;
+            break;
+        case DCStorageTypeLocal:
+            shouldAskDelegate = (hasCloudAccess && !hasAskedForCloudStorage);
+            break;
+        case DCStorageTypeCloud:
+            shouldAskDelegate = NO;
+            break;
+    }
+    return shouldAskDelegate;
+}
+
+- (id <NSObject, NSCopying, NSCoding>)ubiquityIdentityToken
+{
+    return self.fileManager.ubiquityIdentityToken;
 }
 @end
