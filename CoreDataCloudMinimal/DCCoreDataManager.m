@@ -411,10 +411,10 @@ persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordi
 }
 
 #pragma mark - Internal Helper Methods
-- (void)setStorageType:(DCStorageType)persistentStorageType
+- (void)setStorageType:(DCStorageType)storageType
 {
-    _storageType = persistentStorageType;
-    self.userDefaults.persistentStorageType = persistentStorageType;
+    _storageType = storageType;
+    self.userDefaults.persistentStorageType = storageType;
 }
 
 - (NSURL *)applicationDocumentsDirectory
