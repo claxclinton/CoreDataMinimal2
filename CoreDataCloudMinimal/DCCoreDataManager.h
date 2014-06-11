@@ -20,12 +20,15 @@ didRequestStorageTypeFrom:(NSUInteger)availableStorageTypes
       didAddStorageType:(DCStorageType)storageType;
 - (void)coreDataManager:(DCCoreDataManager *)coreDataManager
      didAllowDataAccess:(BOOL)dataAccessAllowed;
+- (void)coreDataManager:(DCCoreDataManager *)coreDataManager
+didChangeUbiquitousIdentityTo:(id)ubiquitousIdentity;
 @end
 
 @interface DCCoreDataManager : NSObject
 + (instancetype)dataManagerWithModelName:(NSString *)modelName
                                 delegate:(id <DCCoreDataManagerDelegate>)delegate;
 - (void)addPersistentStore;
+- (BOOL)hasAskedForCloudStorage;
 - (DCData *)insertDataItem;
 - (NSArray *)sortedData;
 @end

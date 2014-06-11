@@ -18,7 +18,7 @@
                                 UIAlertViewDelegate>
 @property (strong, nonatomic) IBOutlet UISegmentedControl *cloudAccessStatusSegmentedControl;
 @property (strong, nonatomic) IBOutlet UISegmentedControl *persistentStoreStatusSegmentedControl;
-@property (strong, nonatomic) IBOutlet UISegmentedControl *launchStateStatusSegmentedControl;
+@property (strong, nonatomic) IBOutlet UISegmentedControl *cloudQuestionStatusSegmentedControl;
 @property (strong, nonatomic) IBOutlet UIButton *activateCoreDataButton;
 @property (strong, nonatomic) IBOutlet UIButton *accessDataButton;
 @property (strong, nonatomic) DCCoreDataManager *coreDataManager;
@@ -45,7 +45,7 @@
     [self.ubiquityIdentityManager addDelegate:self];
     [self setupCloudAccessStatusSegmentedControl];
     [self setupPersistentStoreStatusSegmentedControl];
-    [self setupLaunchStateStatusSegmentedControl];
+    [self setupCloudQuestionStatusSegmentedControl];
     [self setupActivateCoreDataButton];
     [self setupAccessDataButton];
 }
@@ -114,6 +114,11 @@ didRequestStorageTypeFrom:(NSUInteger)availableStorageTypes
     self.activateCoreDataButton.enabled = NO;
 }
 
+- (void)coreDataManager:(DCCoreDataManager *)coreDataManager
+didChangeUbiquitousIdentityTo:(id)ubiquitousIdentity
+{
+}
+
 #pragma mark - Alert View Delegate
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
@@ -125,6 +130,7 @@ didRequestStorageTypeFrom:(NSUInteger)availableStorageTypes
         } else {
             self.storageTypeBlock(DCStorageTypeCloud);
         }
+        [self setupCloudQuestionStatusSegmentedControl];
     }
 }
 
@@ -146,8 +152,10 @@ didRequestStorageTypeFrom:(NSUInteger)availableStorageTypes
     [self.persistentStoreStatusSegmentedControl setSelectedSegmentIndex:self.storageType];
 }
 
-- (void)setupLaunchStateStatusSegmentedControl
+- (void)setupCloudQuestionStatusSegmentedControl
 {
+    NSInteger segmentIndex = ([self.coreDataManager hasAskedForCloudStorage]) ? 1 : 0;
+    [self.cloudAccessStatusSegmentedControl setSelectedSegmentIndex:segmentIndex];
 }
 
 - (void)setupActivateCoreDataButton

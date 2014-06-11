@@ -35,6 +35,7 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
 @interface DCCoreDataManager ()
 @property (strong, nonatomic) NSPersistentStoreCoordinator *cloudPersistentStoreCoordinator;
 @property (strong, nonatomic) NSPersistentStore *cloudPersistentStore;
+@property (assign, nonatomic) BOOL askedForCloudStorage;
 @end
 
 @interface DCCoreDataManager ()
@@ -74,6 +75,11 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
 #pragma mark - Public Methods
 - (void)addPersistentStore
 {
+}
+
+- (BOOL)hasAskedForCloudStorage
+{
+    return self.askedForCloudStorage;
 }
 
 - (DCData *)insertDataItem
