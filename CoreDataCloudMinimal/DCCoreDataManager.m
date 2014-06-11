@@ -22,7 +22,7 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
 @property (weak, nonatomic) id <DCCoreDataManagerDelegate> delegate;
 @property (strong, nonatomic) DCSharedServices *sharedServices;
 @property (strong, nonatomic) DCUserDefaults *userDefaults;
-@property (assign, nonatomic) DCPersistentStorageType persistentStorageType;
+@property (assign, nonatomic) DCStorageType storageType;
 @property (strong, nonatomic) NSPersistentStore *persistentStore;
 @property (strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 @property (strong, nonatomic) NSManagedObjectModel *managedObjectModel;
@@ -57,7 +57,7 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
     if (self != nil) {
         self.modelName = modelName;
         self.delegate = delegate;
-        self.persistentStorageType = DCPersistentStorageTypeNone;
+        self.storageType = DCStorageTypeNone;
         self.sharedServices = [DCSharedServices sharedServices];
         self.userDefaults = self.sharedServices.userDefaults;
         [self registerForCloudNotificationsWithPersistentStoreCoordinator:nil];
@@ -66,69 +66,10 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
     return self;
 }
 
-#pragma mark - Properties
-- (id <NSObject, NSCopying, NSCoding>)ubiquityIdentityToken
-{
-    return self.userDefaults.storedAccessIdentity;
-}
-
 #pragma mark - Public Methods
-- (void)removeStorage
+- (void)addPersistentStore
 {
-    self.persistentStorageType = DCPersistentStorageTypeNone;
-    [self.managedObjectContext reset];
-    self.managedObjectContext = nil;
-    [self clearAllPersistentStoresAndPersistentStoreCoordinators];
-}
-
-- (void)addLocalStorage
-{
-    if (self.persistentStorageType != DCPersistentStorageTypeLocal) {
-        [self.delegate dataManagerDelegate:self accessDataAllowed:NO];
-        [self.managedObjectContext reset];
-        if (self.persistentStorageType == DCPersistentStorageTypeCloud) {
-            [self removeCloudStorage];
-        }
-        [self setupLocalPersistentStore];
-        self.managedObjectContext = nil;
-        self.managedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator;
-        [self.delegate dataManagerDelegate:self accessDataAllowed:YES];
-        [self.delegate dataManagerDelegate:self shouldReload:YES];
-        self.persistentStorageType = DCPersistentStorageTypeLocal;
-    }
-}
-
-- (void)removeLocalStorage
-{
-    NSError *removePersistentStoreError;
-    [self.localPersistentStoreCoordinator
-     removePersistentStore:self.localPersistentStore
-     error:&removePersistentStoreError];
-}
-
-- (void)addCloudStorage
-{
-    if (self.persistentStorageType != DCPersistentStorageTypeCloud) {
-        [self.delegate dataManagerDelegate:self accessDataAllowed:NO];
-        [self.managedObjectContext reset];
-        if (self.persistentStorageType == DCPersistentStorageTypeLocal) {
-            [self removeLocalStorage];
-        }
-        [self setupCloudPersistentStore];
-        self.managedObjectContext = nil;
-        self.managedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator;
-        self.persistentStorageType = DCPersistentStorageTypeCloud;
-        [self.delegate dataManagerDelegate:self accessDataAllowed:YES];
-        [self.delegate dataManagerDelegate:self shouldReload:YES];
-    }
-}
-
-- (void)removeCloudStorage
-{
-    NSError *removePersistentStoreError;
-    [self.cloudPersistentStoreCoordinator
-     removePersistentStore:self.cloudPersistentStore
-     error:&removePersistentStoreError];
+    
 }
 
 - (DCData *)insertDataItem
@@ -164,6 +105,65 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
         }
     }
     return results;
+}
+
+#pragma mark - Add Remove Storage Methods
+- (void)removeStorage
+{
+    self.storageType = DCStorageTypeNone;
+    [self.managedObjectContext reset];
+    self.managedObjectContext = nil;
+    [self clearAllPersistentStoresAndPersistentStoreCoordinators];
+}
+
+- (void)addLocalStorage
+{
+    if (self.storageType != DCStorageTypeLocal) {
+        [self.delegate dataManagerDelegate:self accessDataAllowed:NO];
+        [self.managedObjectContext reset];
+        if (self.storageType == DCStorageTypeCloud) {
+            [self removeCloudStorage];
+        }
+        [self setupLocalPersistentStore];
+        self.managedObjectContext = nil;
+        self.managedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator;
+        [self.delegate dataManagerDelegate:self accessDataAllowed:YES];
+        [self.delegate dataManagerDelegate:self shouldReload:YES];
+        self.storageType = DCStorageTypeLocal;
+    }
+}
+
+- (void)removeLocalStorage
+{
+    NSError *removePersistentStoreError;
+    [self.localPersistentStoreCoordinator
+     removePersistentStore:self.localPersistentStore
+     error:&removePersistentStoreError];
+}
+
+- (void)addCloudStorage
+{
+    if (self.storageType != DCStorageTypeCloud) {
+        [self.delegate dataManagerDelegate:self accessDataAllowed:NO];
+        [self.managedObjectContext reset];
+        if (self.storageType == DCStorageTypeLocal) {
+            [self removeLocalStorage];
+        }
+        [self setupCloudPersistentStore];
+        self.managedObjectContext = nil;
+        self.managedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator;
+        self.storageType = DCStorageTypeCloud;
+        [self.delegate dataManagerDelegate:self accessDataAllowed:YES];
+        [self.delegate dataManagerDelegate:self shouldReload:YES];
+    }
+}
+
+- (void)removeCloudStorage
+{
+    NSError *removePersistentStoreError;
+    [self.cloudPersistentStoreCoordinator
+     removePersistentStore:self.cloudPersistentStore
+     error:&removePersistentStoreError];
 }
 
 #pragma mark - Cloud Notifications
@@ -435,9 +435,9 @@ persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordi
 }
 
 #pragma mark - Internal Helper Methods
-- (void)setPersistentStorageType:(DCPersistentStorageType)persistentStorageType
+- (void)setStorageType:(DCStorageType)persistentStorageType
 {
-    _persistentStorageType = persistentStorageType;
+    _storageType = persistentStorageType;
     self.userDefaults.persistentStorageType = persistentStorageType;
     if ([self.delegate respondsToSelector:@selector(dataManagerDelegate:didChangeToStorageType:)]) {
         [self.delegate dataManagerDelegate:self didChangeToStorageType:persistentStorageType];
