@@ -165,7 +165,7 @@ requestStorageTypeBlock:(void (^)(DCStorageType selectedStorageType))block
 - (void)configureCloudQuestionStatusSegmentedControl
 {
     NSInteger segmentIndex = (self.userDefaults.hasAskedForCloudStorage) ? 1 : 0;
-    [self.cloudAccessStatusSegmentedControl setSelectedSegmentIndex:segmentIndex];
+    [self.cloudQuestionStatusSegmentedControl setSelectedSegmentIndex:segmentIndex];
 }
 
 - (void)configureActivateCoreDataButton
@@ -183,6 +183,7 @@ requestStorageTypeBlock:(void (^)(DCStorageType selectedStorageType))block
 {
     _storageType = storageType;
     [self configurePersistentStoreStatusSegmentedControl];
+    [self configureActivateCoreDataButton];
 }
 
 - (void)setDataAccessAllowed:(BOOL)dataAccessAllowed

@@ -16,8 +16,8 @@
 #import "DCData.h"
 
 static NSString * const DCUbiquitousContentName = @"CoreDataCloudMinimal";
-static NSString * const DCStoreNameLocal = @"Data-Local.sqlite";
-static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
+static NSString * const DCStoreNameLocal = @"ModelStorage-Local.sqlite";
+static NSString * const DCStoreNameCloud = @"ModelStorage-Cloud.sqlite";
 
 @interface DCCoreDataManager () <DCUbiquityIdentityManagerDelegate,
                                  DCStorageChangeEventsManagerDelegate>
@@ -78,18 +78,7 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
 #pragma mark - Public Methods
 - (void)addPersistentStore
 {
-    [self setDataAccessAllowed:NO updateDelegateIfChange:YES updateDelegateForced:NO];
-    BOOL shouldAskDelegate = [self shouldAskDelegateForStorageType];
-    if (shouldAskDelegate) {
-        __weak typeof(self)weakSelf = self;
-        NSUInteger availableStorageTypes = (DCStorageTypeLocal | DCStorageTypeCloud);
-        [self.delegate coreDataManager:self didRequestStorageTypeFrom:availableStorageTypes
-                            usingBlock:^(DCStorageType selectedStorageType) {
-                                [weakSelf addStoreWithStorageType:selectedStorageType];
-                            }];
-    } else {
-        [self addStoreWithStorageType:DCStorageTypeLocal];
-    }
+    [self addPersistentStoreWithLocalStoreAsDefault:YES];
 }
 
 - (DCData *)insertDataItem
@@ -204,14 +193,16 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
           didChangeFromIdentity:(id <NSObject, NSCopying, NSCoding>)fromIdentity
                      toIdentity:(id <NSObject, NSCopying, NSCoding>)toIdentity
 {
+    [self setDataAccessAllowed:NO updateDelegateIfChange:YES updateDelegateForced:NO];
     if (self.storageType == DCStorageTypeCloud) {
-        [self setDataAccessAllowed:NO updateDelegateIfChange:YES updateDelegateForced:NO];
         __weak typeof(self)weakSelf = self;
         [self.delegate coreDataManager:self
          didChangeUbiquitousIdentityTo:toIdentity
                requestStorageTypeBlock:^(DCStorageType selectedStorageType) {
                    [weakSelf addStoreWithStorageType:selectedStorageType];
                }];
+    } else {
+        [self addPersistentStoreWithLocalStoreAsDefault:NO];
     }
 }
 
@@ -424,6 +415,25 @@ persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordi
 {
     _storageType = storageType;
     self.userDefaults.persistentStorageType = storageType;
+}
+
+- (void)addPersistentStoreWithLocalStoreAsDefault:(BOOL)localStoreAsDefault
+{
+    [self setDataAccessAllowed:NO updateDelegateIfChange:YES updateDelegateForced:NO];
+    BOOL shouldAskDelegate = [self shouldAskDelegateForStorageType];
+    if (shouldAskDelegate) {
+        self.userDefaults.hasAskedForCloudStorage = YES;
+        __weak typeof(self)weakSelf = self;
+        NSUInteger availableStorageTypes = (DCStorageTypeLocal | DCStorageTypeCloud);
+        [self.delegate coreDataManager:self didRequestStorageTypeFrom:availableStorageTypes
+                            usingBlock:^(DCStorageType selectedStorageType) {
+                                [weakSelf addStoreWithStorageType:selectedStorageType];
+                            }];
+    } else {
+        if (localStoreAsDefault) {
+            [self addStoreWithStorageType:DCStorageTypeLocal];
+        }
+    }
 }
 
 - (NSURL *)applicationDocumentsDirectory
