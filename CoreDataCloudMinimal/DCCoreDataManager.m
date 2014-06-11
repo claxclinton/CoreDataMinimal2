@@ -221,6 +221,7 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
 didReceiveStoresWillChangeNotification:(NSNotification *)notification
         persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordinator
 {
+    [self logTransitionTypeFromUserInfo:notification.userInfo];
     [self setDataAccessAllowed:NO updateDelegateIfChange:YES updateDelegateForced:NO];
     if ([self.managedObjectContext hasChanges]) {
         __weak typeof(self)weakSelf = self;
@@ -245,8 +246,7 @@ didReceiveStoresWillChangeNotification:(NSNotification *)notification
 didReceiveStoresDidChangeNotification:(NSNotification *)notification
         persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordinator
 {
-    NSDictionary *userInfo = notification.userInfo;
-    [self logTransitionTypeFromUserInfo:userInfo];
+    [self logTransitionTypeFromUserInfo:notification.userInfo];
     [self setDataAccessAllowed:YES updateDelegateIfChange:YES updateDelegateForced:NO];
 }
 
