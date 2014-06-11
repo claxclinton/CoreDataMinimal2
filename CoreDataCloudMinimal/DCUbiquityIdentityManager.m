@@ -59,17 +59,16 @@
 
 - (void)addDelegate:(id <DCUbiquityIdentityManagerDelegate>)delegate
 {
-    NSParameterAssert(delegate != nil);
-    NSAssert(![self.delegates containsObject:delegate],
-             @"Delegate can only be added once.");
-    [self.delegates addObject:delegate];
+    if (![self.delegates containsObject:delegate]) {
+        [self.delegates addObject:delegate];
+    }
 }
 
 - (void)removeDelegate:(id <DCUbiquityIdentityManagerDelegate>)delegate
 {
-    NSParameterAssert(delegate != nil);
-    NSAssert([self.delegates containsObject:delegate],
-             @"Delegate must have been added before removing.");
+    if ([self.delegates containsObject:delegate]) {
+        [self.delegates removeObject:delegate];
+    }
 }
 
 - (BOOL)isDelegate:(id <DCUbiquityIdentityManagerDelegate>)delegate

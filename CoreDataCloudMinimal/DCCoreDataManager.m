@@ -26,6 +26,7 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
 @property (strong, nonatomic) DCSharedServices *sharedServices;
 @property (strong, nonatomic) DCUserDefaults *userDefaults;
 @property (assign, nonatomic) DCStorageType storageType;
+@property (assign, nonatomic) DCStorageType dataAccessAllowed;
 @property (strong, nonatomic) NSPersistentStore *persistentStore;
 @property (strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 @property (strong, nonatomic) NSManagedObjectModel *managedObjectModel;
@@ -63,22 +64,21 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
         self.sharedServices = [DCSharedServices sharedServices];
         self.userDefaults = self.sharedServices.userDefaults;
         self.fileManager = [NSFileManager defaultManager];
-        [self.delegate coreDataManager:self didAllowDataAccess:NO];
+        [self setDataAccessAllowed:NO updateDelegateIfChange:NO updateDelegateForced:YES];
     }
     return self;
 }
 
 - (void)dealloc
 {
-    [self unregisterForUbiquityIdentityChanges];
-    [self unregisterForStorageChangeEvents];
+    [self setDataAccessAllowed:NO updateDelegateIfChange:NO updateDelegateForced:YES];
+    [self unregisterForAllEvents];
 }
 
 #pragma mark - Public Methods
 - (void)addPersistentStore
 {
-    [self registerForUbiquityIdentityChanges];
-    [self registerForStorageChangeEvents];
+    [self setDataAccessAllowed:NO updateDelegateIfChange:YES updateDelegateForced:NO];
     BOOL shouldAskDelegate = [self shouldAskDelegateForStorageType];
     if (shouldAskDelegate) {
         __weak typeof(self)weakSelf = self;
@@ -130,13 +130,15 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
 #pragma mark - Add Remove Storage Methods
 - (void)addStoreWithStorageType:(DCStorageType)storageType
 {
+    [self setDataAccessAllowed:NO updateDelegateIfChange:YES updateDelegateForced:NO];
     if (storageType == DCStorageTypeLocal) {
         [self addLocalStore];
     } else {
         [self addCloudStore];
     }
+    [self registerForAllEventsWithPersistentStoreCoordinator:self.persistentStoreCoordinator];
     [self.delegate coreDataManager:self didAddStorageType:storageType];
-    [self.delegate coreDataManager:self didAllowDataAccess:YES];
+    [self setDataAccessAllowed:YES updateDelegateIfChange:YES updateDelegateForced:NO];
 }
 
 - (void)addLocalStore
@@ -184,24 +186,16 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
 }
 
 #pragma mark - Register And Unregister For Ubiquity Identity And Storage Changes
-- (void)registerForUbiquityIdentityChanges
+- (void)registerForAllEventsWithPersistentStoreCoordinator:(NSPersistentStoreCoordinator *)coordinator
 {
     [self.sharedServices.ubiquityIdentityManager addDelegate:self];
+    [self.sharedServices.storageEventNotificationManager
+     addDelegate:self forCoordinator:coordinator];
 }
 
-- (void)unregisterForUbiquityIdentityChanges
+- (void)unregisterForAllEvents
 {
     [self.sharedServices.ubiquityIdentityManager removeDelegate:self];
-}
-
-- (void)registerForStorageChangeEvents
-{
-    [self.sharedServices.storageEventNotificationManager
-     addDelegate:self forCoordinator:self.persistentStoreCoordinator];
-}
-
-- (void)unregisterForStorageChangeEvents
-{
     [self.sharedServices.storageEventNotificationManager
      removeDelegate:self forCoordinator:self.persistentStoreCoordinator];
 }
@@ -212,6 +206,7 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
                      toIdentity:(id <NSObject, NSCopying, NSCoding>)toIdentity
 {
     if (self.storageType == DCStorageTypeCloud) {
+        [self setDataAccessAllowed:NO updateDelegateIfChange:YES updateDelegateForced:NO];
         __weak typeof(self)weakSelf = self;
         [self.delegate coreDataManager:self
          didChangeUbiquitousIdentityTo:toIdentity
@@ -226,14 +221,13 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
 didReceiveStoresWillChangeNotification:(NSNotification *)notification
         persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordinator
 {
-    NSLog(@"CLLI: %s", __PRETTY_FUNCTION__);
-    NSLog(@"CLLI: From: %@", notification.userInfo[NSAddedPersistentStoresKey]);
-    NSLog(@"CLLI: To: %@", notification.userInfo[NSRemovedPersistentStoresKey]);
+    [self setDataAccessAllowed:NO updateDelegateIfChange:YES updateDelegateForced:NO];
     if ([self.managedObjectContext hasChanges]) {
         NSError *saveError;
         BOOL saveSuccess = [self.managedObjectContext save:&saveError];
         if (!saveSuccess) {
             NSLog(@"CLLI: Failed to save with error: %@.", saveError);
+            abort();
         }
     }
     [self.managedObjectContext reset];
@@ -243,20 +237,19 @@ didReceiveStoresWillChangeNotification:(NSNotification *)notification
 didReceiveStoresDidChangeNotification:(NSNotification *)notification
         persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordinator
 {
-    NSLog(@"CLLI: %s", __PRETTY_FUNCTION__);
-    NSLog(@"CLLI: From: %@", notification.userInfo[NSAddedPersistentStoresKey]);
-    NSLog(@"CLLI: To: %@", notification.userInfo[NSRemovedPersistentStoresKey]);
     NSDictionary *userInfo = notification.userInfo;
     [self logTransitionTypeFromUserInfo:userInfo];
+    [self setDataAccessAllowed:YES updateDelegateIfChange:YES updateDelegateForced:NO];
 }
 
 - (void)storageChangeEventsManager:(DCStorageChangeEventsManager *)manager
 didReceiveContentImportNotification:(NSNotification *)notification
         persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordinator
 {
-    NSLog(@"CLLI: %s", __PRETTY_FUNCTION__);
+    [self setDataAccessAllowed:NO updateDelegateIfChange:YES updateDelegateForced:NO];
+    [self.managedObjectContext mergeChangesFromContextDidSaveNotification:notification];
+    [self setDataAccessAllowed:YES updateDelegateIfChange:YES updateDelegateForced:NO];
 }
-
 
 #pragma mark - Managed Object Context
 - (NSManagedObjectContext *)managedObjectContext
@@ -280,6 +273,9 @@ didReceiveContentImportNotification:(NSNotification *)notification
     // Create coordinator with managed object model.
     persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc]
                                   initWithManagedObjectModel:self.managedObjectModel];
+    
+    // Register for notifications for ubiquity identity and storage.
+    
     
     // Create coordinator with persistent store.
     NSDictionary *options = [self localPersistentStoreCoordinatorOptions];
@@ -456,7 +452,6 @@ persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordi
     }
 }
 
-
 - (BOOL)shouldAskDelegateForStorageType
 {
     BOOL shouldAskDelegate;
@@ -474,5 +469,21 @@ persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordi
             break;
     }
     return shouldAskDelegate;
+}
+
+- (void)setDataAccessAllowed:(BOOL)dataAccessAllowed
+      updateDelegateIfChange:(BOOL)updateDelegateIfChange
+        updateDelegateForced:(BOOL)updateDelegateForced
+{
+    if (_dataAccessAllowed != dataAccessAllowed) {
+        self.dataAccessAllowed = dataAccessAllowed;
+        if (updateDelegateIfChange || updateDelegateForced) {
+            [self.delegate coreDataManager:self didAllowDataAccess:dataAccessAllowed];
+        }
+    } else {
+        if (updateDelegateForced) {
+            [self.delegate coreDataManager:self didAllowDataAccess:dataAccessAllowed];
+        }
+    }
 }
 @end
