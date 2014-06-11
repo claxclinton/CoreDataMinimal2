@@ -78,13 +78,11 @@
 
 #pragma mark - Core Data Manager Delegate
 - (void)coreDataManager:(DCCoreDataManager *)coreDataManager
-  didRequestStorageType:(DCStorageType *)storageType
-       fromStorageTypes:(NSUInteger)availableStorageTypes
+didRequestStorageTypeUsingBlock:(DCStorageType (^)(void))block
+       fromStorageTypes:(NSUInteger)availableStorageTypes;
 {
     self.availableStorageTypes = availableStorageTypes;
     [self setupPersistentStoreSegmentedControl];
-    BOOL storageTypeCloudAvailable = (self.availableStorageTypes & DCStorageTypeCloud);
-    
 }
 
 - (void)coreDataManager:(DCCoreDataManager *)coreDataManager
