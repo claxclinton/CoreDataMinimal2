@@ -27,6 +27,7 @@
 @property (strong, nonatomic) DCSharedServices *sharedServices;
 @property (strong, nonatomic) DCUserDefaults *userDefaults;
 @property (strong, nonatomic) DCUbiquityIdentityManager *ubiquityIdentityManager;
+@property (assign, nonatomic) BOOL dataAccessAllowed;
 @property (copy, nonatomic) void (^storageTypeBlock)(DCStorageType type);
 @end
 
@@ -43,11 +44,11 @@
     self.userDefaults = self.sharedServices.userDefaults;
     self.ubiquityIdentityManager = self.sharedServices.ubiquityIdentityManager;
     [self.ubiquityIdentityManager addDelegate:self];
-    [self setupCloudAccessStatusSegmentedControl];
-    [self setupPersistentStoreStatusSegmentedControl];
-    [self setupCloudQuestionStatusSegmentedControl];
-    [self setupActivateCoreDataButton];
-    [self setupAccessDataButton];
+    [self configureCloudAccessStatusSegmentedControl];
+    [self configurePersistentStoreStatusSegmentedControl];
+    [self configureCloudQuestionStatusSegmentedControl];
+    [self configureActivateCoreDataButton];
+    [self configureAccessDataButton];
 }
 
 #pragma mark - Navigation
@@ -112,7 +113,7 @@ didRequestStorageTypeFrom:(NSUInteger)availableStorageTypes
 - (void)coreDataManager:(DCCoreDataManager *)coreDataManager
      didAllowDataAccess:(BOOL)dataAccessAllowed
 {
-    self.activateCoreDataButton.enabled = NO;
+    self.dataAccessAllowed = dataAccessAllowed;
 }
 
 - (void)coreDataManager:(DCCoreDataManager *)coreDataManager
@@ -139,12 +140,12 @@ requestStorageTypeBlock:(void (^)(DCStorageType selectedStorageType))block
         } else {
             self.storageTypeBlock(DCStorageTypeCloud);
         }
-        [self setupCloudQuestionStatusSegmentedControl];
+        [self configureCloudQuestionStatusSegmentedControl];
     }
 }
 
 #pragma mark - UI Setup Methods
-- (void)setupCloudAccessStatusSegmentedControl
+- (void)configureCloudAccessStatusSegmentedControl
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
     id ubiquityIdentityToken = [fileManager ubiquityIdentityToken];
@@ -156,31 +157,38 @@ requestStorageTypeBlock:(void (^)(DCStorageType selectedStorageType))block
     }
 }
 
-- (void)setupPersistentStoreStatusSegmentedControl
+- (void)configurePersistentStoreStatusSegmentedControl
 {
     [self.persistentStoreStatusSegmentedControl setSelectedSegmentIndex:self.storageType];
 }
 
-- (void)setupCloudQuestionStatusSegmentedControl
+- (void)configureCloudQuestionStatusSegmentedControl
 {
     NSInteger segmentIndex = (self.userDefaults.hasAskedForCloudStorage) ? 1 : 0;
     [self.cloudAccessStatusSegmentedControl setSelectedSegmentIndex:segmentIndex];
 }
 
-- (void)setupActivateCoreDataButton
+- (void)configureActivateCoreDataButton
 {
     self.activateCoreDataButton.enabled = (self.storageType == DCStorageTypeNone);
 }
 
-- (void)setupAccessDataButton
+- (void)configureAccessDataButton
 {
+    self.accessDataButton.enabled = self.dataAccessAllowed;
 }
 
-#pragma mark - Storage Type Property
+#pragma mark - Properties
 - (void)setStorageType:(DCStorageType)storageType
 {
     _storageType = storageType;
-    [self setupPersistentStoreStatusSegmentedControl];
+    [self configurePersistentStoreStatusSegmentedControl];
+}
+
+- (void)setDataAccessAllowed:(BOOL)dataAccessAllowed
+{
+    _dataAccessAllowed = dataAccessAllowed;
+    [self configureAccessDataButton];
 }
 
 #pragma mark - Ubiquity Identity Manager Delegate - Only for Testing!
@@ -188,6 +196,6 @@ requestStorageTypeBlock:(void (^)(DCStorageType selectedStorageType))block
           didChangeFromIdentity:(id<NSObject,NSCopying,NSCoding>)fromIdentity
                      toIdentity:(id<NSObject,NSCopying,NSCoding>)toIdentity
 {
-    [self setupCloudAccessStatusSegmentedControl];
+    [self configureCloudAccessStatusSegmentedControl];
 }
 @end
