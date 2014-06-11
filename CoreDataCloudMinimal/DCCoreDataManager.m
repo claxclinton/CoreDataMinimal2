@@ -223,14 +223,22 @@ didReceiveStoresWillChangeNotification:(NSNotification *)notification
 {
     [self setDataAccessAllowed:NO updateDelegateIfChange:YES updateDelegateForced:NO];
     if ([self.managedObjectContext hasChanges]) {
-        NSError *saveError;
-        BOOL saveSuccess = [self.managedObjectContext save:&saveError];
-        if (!saveSuccess) {
-            NSLog(@"CLLI: Failed to save with error: %@.", saveError);
-            abort();
-        }
+        __weak typeof(self)weakSelf = self;
+        dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+        dispatch_async(queue, ^{
+            [weakSelf.managedObjectContext performBlockAndWait:^{
+                NSError *saveError;
+                BOOL saveSuccess = [self.managedObjectContext save:&saveError];
+                if (!saveSuccess) {
+                    NSLog(@"CLLI: Failed to save with error: %@.", saveError);
+                    abort();
+                }
+            }];
+             [weakSelf.managedObjectContext performBlockAndWait:^{
+                 [weakSelf.managedObjectContext reset];
+             }];
+        });
     }
-    [self.managedObjectContext reset];
 }
 
 - (void)storageChangeEventsManager:(DCStorageChangeEventsManager *)manager
