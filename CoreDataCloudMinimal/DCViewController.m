@@ -17,7 +17,7 @@
 @property (strong, nonatomic) IBOutlet UISegmentedControl *cloudAccessStatusSegmentedControl;
 @property (strong, nonatomic) IBOutlet UISegmentedControl *persistentStoreStatusSegmentedControl;
 @property (strong, nonatomic) IBOutlet UISegmentedControl *launchStateStatusSegmentedControl;
-@property (strong, nonatomic) IBOutlet UISegmentedControl *persistentStoreSegmentedControl;
+@property (strong, nonatomic) IBOutlet UIButton *activateCoreDataButton;
 @property (strong, nonatomic) IBOutlet UIButton *accessDataButton;
 @property (strong, nonatomic) DCCoreDataManager *coreDataManager;
 @property (assign, nonatomic) DCStorageType storageType;
@@ -45,7 +45,7 @@
     [self setupCloudAccessStatusSegmentedControl];
     [self setupPersistentStoreStatusSegmentedControl];
     [self setupLaunchStateStatusSegmentedControl];
-    [self setupPersistentStoreSegmentedControl];
+    [self setupActivateCoreDataButton];
     [self setupAccessDataButton];
 }
 
@@ -67,7 +67,7 @@
 }
 
 #pragma mark - User Actions
-- (IBAction)persistentStoreSegmentedControlActionWithSender:(id)sender
+- (IBAction)activateCoreDataButtonActionWithSender:(id)sender
 {
 }
 
@@ -82,7 +82,6 @@ didRequestStorageTypeUsingBlock:(DCStorageType (^)(void))block
        fromStorageTypes:(NSUInteger)availableStorageTypes;
 {
     self.availableStorageTypes = availableStorageTypes;
-    [self setupPersistentStoreSegmentedControl];
 }
 
 - (void)coreDataManager:(DCCoreDataManager *)coreDataManager
@@ -119,21 +118,9 @@ didRequestStorageTypeUsingBlock:(DCStorageType (^)(void))block
 {
 }
 
-- (void)setupPersistentStoreSegmentedControl
+- (void)setupActivateCoreDataButton
 {
-    BOOL storageTypeNoneAvailable = (self.availableStorageTypes & DCStorageTypeNone);
-    BOOL storageTypeLocalAvailable = (self.availableStorageTypes & DCStorageTypeLocal);
-    BOOL storageTypeCloudAvailable = (self.availableStorageTypes & DCStorageTypeCloud);
-    [self.persistentStoreStatusSegmentedControl setSelectedSegmentIndex:UISegmentedControlNoSegment];
-    if (storageTypeNoneAvailable) {
-        [self.persistentStoreStatusSegmentedControl setSelectedSegmentIndex:0];
-    }
-    if (storageTypeLocalAvailable) {
-        [self.persistentStoreStatusSegmentedControl setSelectedSegmentIndex:1];
-    }
-    if (storageTypeCloudAvailable) {
-        [self.persistentStoreStatusSegmentedControl setSelectedSegmentIndex:2];
-    }
+    self.activateCoreDataButton.enabled = (self.storageType == DCStorageTypeNone);
 }
 
 - (void)setupAccessDataButton
