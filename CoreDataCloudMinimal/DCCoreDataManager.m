@@ -196,6 +196,13 @@ static NSString * const DCStoreNameCloud = @"ModelStorage-Cloud.sqlite";
 {
     [self setDataAccessAllowed:NO updateDelegateIfChange:YES updateDelegateForced:NO];
     if (self.storageType == DCStorageTypeCloud) {
+        // If iCloud support is now disabled, the user has to choose local storage.
+        // But if, on a later occation iCloud becomes available again, the choice
+        // between local or cloud should be possible again.
+        if (toIdentity == nil) {
+            self.userDefaults.hasAskedForCloudStorage = NO;
+        }
+        
         __weak typeof(self)weakSelf = self;
         [self.delegate coreDataManager:self
          didChangeUbiquitousIdentityTo:toIdentity
