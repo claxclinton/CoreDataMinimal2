@@ -52,7 +52,8 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
     return [[DCCoreDataManager alloc] initWithModelName:modelName delegate:delegate];
 }
 
-- (instancetype)initWithModelName:(NSString *)modelName delegate:(id <DCCoreDataManagerDelegate>)delegate
+- (instancetype)initWithModelName:(NSString *)modelName
+                         delegate:(id <DCCoreDataManagerDelegate>)delegate
 {
     self = [super init];
     if (self != nil) {
@@ -62,6 +63,7 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
         self.sharedServices = [DCSharedServices sharedServices];
         self.userDefaults = self.sharedServices.userDefaults;
         self.fileManager = [NSFileManager defaultManager];
+        [self.delegate coreDataManager:self didAllowDataAccess:NO];
     }
     return self;
 }
@@ -86,8 +88,7 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
                                 [weakSelf addStoreWithStorageType:selectedStorageType];
                             }];
     } else {
-        [self addLocalStore];
-        [self.delegate coreDataManager:self didAddStorageType:DCStorageTypeLocal];
+        [self addStoreWithStorageType:DCStorageTypeLocal];
     }
 }
 
@@ -135,6 +136,7 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
         [self addCloudStore];
     }
     [self.delegate coreDataManager:self didAddStorageType:storageType];
+    [self.delegate coreDataManager:self didAllowDataAccess:YES];
 }
 
 - (void)addLocalStore
@@ -458,7 +460,7 @@ persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordi
 - (BOOL)shouldAskDelegateForStorageType
 {
     BOOL shouldAskDelegate;
-    BOOL hasCloudAccess = [self ubiquityIdentityToken];
+    BOOL hasCloudAccess = self.fileManager.ubiquityIdentityToken;
     BOOL hasAskedForCloudStorage = self.userDefaults.hasAskedForCloudStorage;
     switch (self.userDefaults.persistentStorageType) {
         case DCStorageTypeNone:
@@ -472,10 +474,5 @@ persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordi
             break;
     }
     return shouldAskDelegate;
-}
-
-- (id <NSObject, NSCopying, NSCoding>)ubiquityIdentityToken
-{
-    return self.fileManager.ubiquityIdentityToken;
 }
 @end
