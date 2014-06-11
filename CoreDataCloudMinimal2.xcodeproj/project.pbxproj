@@ -13,7 +13,7 @@
 		4B4A901A1942CFA9005ADA9B /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4B4A90181942CFA9005ADA9B /* Model.xcdatamodeld */; };
 		4B4A90231942D06A005ADA9B /* DCCoreDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B4A90221942D06A005ADA9B /* DCCoreDataManager.m */; };
 		4B50A67B19486545007770D2 /* DCUbiquityIdentityManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B50A67A19486545007770D2 /* DCUbiquityIdentityManager.m */; };
-		4B50A67F19486D9C007770D2 /* DCStorageEventNotificationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B50A67E19486D9C007770D2 /* DCStorageEventNotificationManager.m */; };
+		4B50A67F19486D9C007770D2 /* DCStorageChangeEventsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B50A67E19486D9C007770D2 /* DCStorageChangeEventsManager.m */; };
 		4BC0D24819407D8B00E2142B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BC0D24719407D8B00E2142B /* Foundation.framework */; };
 		4BC0D24A19407D8B00E2142B /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BC0D24919407D8B00E2142B /* CoreGraphics.framework */; };
 		4BC0D24C19407D8B00E2142B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BC0D24B19407D8B00E2142B /* UIKit.framework */; };
@@ -55,8 +55,8 @@
 		4B50A67919486545007770D2 /* DCUbiquityIdentityManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCUbiquityIdentityManager.h; sourceTree = "<group>"; };
 		4B50A67A19486545007770D2 /* DCUbiquityIdentityManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DCUbiquityIdentityManager.m; sourceTree = "<group>"; };
 		4B50A67C19486B8F007770D2 /* DCStorageType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DCStorageType.h; sourceTree = "<group>"; };
-		4B50A67D19486D9C007770D2 /* DCStorageEventNotificationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCStorageEventNotificationManager.h; sourceTree = "<group>"; };
-		4B50A67E19486D9C007770D2 /* DCStorageEventNotificationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DCStorageEventNotificationManager.m; sourceTree = "<group>"; };
+		4B50A67D19486D9C007770D2 /* DCStorageChangeEventsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCStorageChangeEventsManager.h; sourceTree = "<group>"; };
+		4B50A67E19486D9C007770D2 /* DCStorageChangeEventsManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DCStorageChangeEventsManager.m; sourceTree = "<group>"; };
 		4BC0D24419407D8B00E2142B /* CoreDataCloudMinimal2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoreDataCloudMinimal2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BC0D24719407D8B00E2142B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		4BC0D24919407D8B00E2142B /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -152,8 +152,8 @@
 				4B4A90221942D06A005ADA9B /* DCCoreDataManager.m */,
 				4B50A67919486545007770D2 /* DCUbiquityIdentityManager.h */,
 				4B50A67A19486545007770D2 /* DCUbiquityIdentityManager.m */,
-				4B50A67D19486D9C007770D2 /* DCStorageEventNotificationManager.h */,
-				4B50A67E19486D9C007770D2 /* DCStorageEventNotificationManager.m */,
+				4B50A67D19486D9C007770D2 /* DCStorageChangeEventsManager.h */,
+				4B50A67E19486D9C007770D2 /* DCStorageChangeEventsManager.m */,
 				4B4053D41943745700892360 /* DCUserDefaults.h */,
 				4B4053D51943745700892360 /* DCUserDefaults.m */,
 				4BDA27D01945C3B600E475F3 /* DCSharedServices.h */,
@@ -305,7 +305,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B4053D61943745700892360 /* DCUserDefaults.m in Sources */,
-				4B50A67F19486D9C007770D2 /* DCStorageEventNotificationManager.m in Sources */,
+				4B50A67F19486D9C007770D2 /* DCStorageChangeEventsManager.m in Sources */,
 				4BC0D25419407D8B00E2142B /* main.m in Sources */,
 				4BC0D26119407D8B00E2142B /* DCViewController.m in Sources */,
 				4B4A901A1942CFA9005ADA9B /* Model.xcdatamodeld in Sources */,

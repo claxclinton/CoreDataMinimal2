@@ -11,13 +11,16 @@
 #import "DCCoreDataManager.h"
 #import "DCSharedServices.h"
 #import "DCUserDefaults.h"
+#import "DCUbiquityIdentityManager.h"
+#import "DCStorageChangeEventsManager.h"
 #import "DCData.h"
 
 static NSString * const DCUbiquitousContentName = @"CoreDataCloudMinimal";
 static NSString * const DCStoreNameLocal = @"Data-Local.sqlite";
 static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
 
-@interface DCCoreDataManager ()
+@interface DCCoreDataManager () <DCUbiquityIdentityManagerDelegate,
+                                 DCStorageChangeEventsManagerDelegate>
 @property (copy, nonatomic) NSString *modelName;
 @property (weak, nonatomic) id <DCCoreDataManagerDelegate> delegate;
 @property (strong, nonatomic) DCSharedServices *sharedServices;
@@ -27,10 +30,6 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
 @property (strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 @property (strong, nonatomic) NSManagedObjectModel *managedObjectModel;
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
-@property (assign, nonatomic) BOOL registeredForNotificationStoresWillChange;
-@property (assign, nonatomic) BOOL registeredForNotificationStoresDidChange;
-@property (assign, nonatomic) BOOL registeredForNotificationDidImportUbiquitousContent;
-@property (assign, nonatomic) BOOL registeredForNotificationUbiquitousIdentityDidChange;
 @end
 
 @interface DCCoreDataManager ()
@@ -44,7 +43,7 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
 @end
 
 @implementation DCCoreDataManager
-#pragma mark - Create And Init
+#pragma mark - Life Cycle
 + (instancetype)dataManagerWithModelName:(NSString *)modelName
                                 delegate:(id <DCCoreDataManagerDelegate>)delegate
 {
@@ -60,16 +59,21 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
         self.storageType = DCStorageTypeNone;
         self.sharedServices = [DCSharedServices sharedServices];
         self.userDefaults = self.sharedServices.userDefaults;
-        [self registerForCloudNotificationsWithPersistentStoreCoordinator:nil];
-        [self updateStoredAccessIdentity];
+        [self registerForUbiquityIdentityChanges];
+        [self registerForStorageChangeEvents];
     }
     return self;
+}
+
+- (void)dealloc
+{
+    [self unregisterForUbiquityIdentityChanges];
+    [self unregisterForStorageChangeEvents];
 }
 
 #pragma mark - Public Methods
 - (void)addPersistentStore
 {
-    
 }
 
 - (DCData *)insertDataItem
@@ -119,7 +123,6 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
 - (void)addLocalStorage
 {
     if (self.storageType != DCStorageTypeLocal) {
-        [self.delegate dataManagerDelegate:self accessDataAllowed:NO];
         [self.managedObjectContext reset];
         if (self.storageType == DCStorageTypeCloud) {
             [self removeCloudStorage];
@@ -127,8 +130,6 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
         [self setupLocalPersistentStore];
         self.managedObjectContext = nil;
         self.managedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator;
-        [self.delegate dataManagerDelegate:self accessDataAllowed:YES];
-        [self.delegate dataManagerDelegate:self shouldReload:YES];
         self.storageType = DCStorageTypeLocal;
     }
 }
@@ -144,7 +145,6 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
 - (void)addCloudStorage
 {
     if (self.storageType != DCStorageTypeCloud) {
-        [self.delegate dataManagerDelegate:self accessDataAllowed:NO];
         [self.managedObjectContext reset];
         if (self.storageType == DCStorageTypeLocal) {
             [self removeLocalStorage];
@@ -153,8 +153,6 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
         self.managedObjectContext = nil;
         self.managedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator;
         self.storageType = DCStorageTypeCloud;
-        [self.delegate dataManagerDelegate:self accessDataAllowed:YES];
-        [self.delegate dataManagerDelegate:self shouldReload:YES];
     }
 }
 
@@ -166,81 +164,45 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
      error:&removePersistentStoreError];
 }
 
-#pragma mark - Cloud Notifications
-- (void)unregisterForCloudNotifications
+#pragma mark - Register And Unregister For Notifications
+- (void)registerForUbiquityIdentityChanges
 {
-    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
-    if (self.registeredForNotificationStoresWillChange) {
-        [notificationCenter removeObserver:self name:NSPersistentStoreCoordinatorStoresWillChangeNotification
-                                    object:nil];
-        self.registeredForNotificationStoresWillChange = NO;
-    }
-    if (self.registeredForNotificationStoresDidChange) {
-        [notificationCenter removeObserver:self name:NSPersistentStoreCoordinatorStoresDidChangeNotification
-                                    object:nil];
-        self.registeredForNotificationStoresDidChange = NO;
-    }
-    if (self.registeredForNotificationDidImportUbiquitousContent) {
-        [notificationCenter removeObserver:self name:NSPersistentStoreDidImportUbiquitousContentChangesNotification
-                                    object:nil];
-        self.registeredForNotificationDidImportUbiquitousContent = NO;
-    }
-    if (self.registeredForNotificationUbiquitousIdentityDidChange) {
-        [notificationCenter removeObserver:self name:NSUbiquityIdentityDidChangeNotification
-                                    object:nil];
-        self.registeredForNotificationUbiquitousIdentityDidChange = NO;
-    }
+    [self.sharedServices.ubiquityIdentityManager addDelegate:self];
 }
 
-- (void)registerForCloudNotificationsWithPersistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordinator
+- (void)unregisterForUbiquityIdentityChanges
 {
-    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
-    __weak typeof(self)weakSelf = self;
-    NSOperationQueue *mainQueue = [NSOperationQueue mainQueue];
-    
-    // NSPersistentStoreCoordinatorStoresWillChangeNotification
-    [notificationCenter addObserverForName:NSPersistentStoreCoordinatorStoresWillChangeNotification
-                                    object:persistentStoreCoordinator queue:mainQueue usingBlock:^(NSNotification *note) {
-                                        [weakSelf storesWillChangeWithNotification:note];
-                                    }];
-    self.registeredForNotificationStoresWillChange = YES;
-    
-    // NSPersistentStoreCoordinatorStoresDidChangeNotification
-    [notificationCenter addObserverForName:NSPersistentStoreCoordinatorStoresDidChangeNotification
-                                    object:persistentStoreCoordinator queue:mainQueue usingBlock:^(NSNotification *note) {
-                                        [weakSelf storesDidChangeWithNotification:note];
-                                    }];
-    self.registeredForNotificationStoresDidChange = YES;
-    
-    // NSPersistentStoreDidImportUbiquitousContentChangesNotification
-    [notificationCenter addObserverForName:NSPersistentStoreDidImportUbiquitousContentChangesNotification
-                                    object:persistentStoreCoordinator queue:mainQueue usingBlock:^(NSNotification *note) {
-                                        [weakSelf persistentStoreDidImportUbiquitousContentChanges:note];
-                                    }];
-    self.registeredForNotificationDidImportUbiquitousContent = YES;
-    
-    // NSUbiquityIdentityDidChangeNotification
-    [notificationCenter addObserverForName:NSUbiquityIdentityDidChangeNotification object:nil
-                                     queue:mainQueue usingBlock:^(NSNotification *note) {
-                                         [weakSelf ubiquityIdentityDidChangeWithNotification:note];
-                                     }];
-    self.registeredForNotificationUbiquitousIdentityDidChange = YES;
+    [self.sharedServices.ubiquityIdentityManager removeDelegate:self];
 }
 
-- (void)logPersistentStoreChangeWithUserInfo:(NSDictionary *)userInfo
+- (void)registerForStorageChangeEvents
 {
-    NSLog(@"CLLI: From: %@", userInfo[NSAddedPersistentStoresKey]);
-    NSLog(@"CLLI: To: %@", userInfo[NSRemovedPersistentStoresKey]);
+    [self.sharedServices.storageEventNotificationManager
+     addDelegate:self forCoordinator:self.persistentStoreCoordinator];
 }
 
-- (void)storesWillChangeWithNotification:(NSNotification *)notification
+- (void)unregisterForStorageChangeEvents
+{
+    [self.sharedServices.storageEventNotificationManager
+     removeDelegate:self forCoordinator:self.persistentStoreCoordinator];
+}
+
+#pragma mark - Ubiquity Identity Changes Delegate
+- (void)ubiquityIdentityManager:(DCUbiquityIdentityManager *)ubiquityIdentityManager
+          didChangeFromIdentity:(id <NSObject, NSCopying, NSCoding>)fromIdentity
+                     toIdentity:(id <NSObject, NSCopying, NSCoding>)toIdentity
+{
+    
+}
+
+#pragma mark - Storage Change Events Delegate
+- (void)storageChangeEventsManager:(DCStorageChangeEventsManager *)manager
+didReceiveStoresWillChangeNotification:(NSNotification *)notification
+        persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordinator
 {
     NSLog(@"CLLI: %s", __PRETTY_FUNCTION__);
-    NSDictionary *userInfo = notification.userInfo;
-    [self logPersistentStoreChangeWithUserInfo:userInfo];
-    [self logTransitionTypeFromUserInfo:userInfo];
-    [self.delegate dataManagerDelegate:self accessDataAllowed:NO];
-    [self.delegate dataManagerDelegate:self shouldLockInterace:YES];
+    NSLog(@"CLLI: From: %@", notification.userInfo[NSAddedPersistentStoresKey]);
+    NSLog(@"CLLI: To: %@", notification.userInfo[NSRemovedPersistentStoresKey]);
     if ([self.managedObjectContext hasChanges]) {
         NSError *saveError;
         BOOL saveSuccess = [self.managedObjectContext save:&saveError];
@@ -251,32 +213,24 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
     [self.managedObjectContext reset];
 }
 
-- (void)storesDidChangeWithNotification:(NSNotification *)notification
+- (void)storageChangeEventsManager:(DCStorageChangeEventsManager *)manager
+didReceiveStoresDidChangeNotification:(NSNotification *)notification
+        persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordinator
 {
     NSLog(@"CLLI: %s", __PRETTY_FUNCTION__);
+    NSLog(@"CLLI: From: %@", notification.userInfo[NSAddedPersistentStoresKey]);
+    NSLog(@"CLLI: To: %@", notification.userInfo[NSRemovedPersistentStoresKey]);
     NSDictionary *userInfo = notification.userInfo;
-    [self logPersistentStoreChangeWithUserInfo:userInfo];
     [self logTransitionTypeFromUserInfo:userInfo];
-    [self.delegate dataManagerDelegate:self accessDataAllowed:YES];
-    [self.delegate dataManagerDelegate:self shouldLockInterace:NO];
-    [self.delegate dataManagerDelegate:self shouldReload:YES];
 }
 
-- (void)persistentStoreDidImportUbiquitousContentChanges:(NSNotification *)changeNotification
+- (void)storageChangeEventsManager:(DCStorageChangeEventsManager *)manager
+didReceiveContentImportNotification:(NSNotification *)notification
+        persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordinator
 {
     NSLog(@"CLLI: %s", __PRETTY_FUNCTION__);
-    [self.delegate dataManagerDelegate:self accessDataAllowed:NO];
-    [self.delegate dataManagerDelegate:self shouldLockInterace:YES];
-    [self.managedObjectContext mergeChangesFromContextDidSaveNotification:changeNotification];
-    [self.delegate dataManagerDelegate:self accessDataAllowed:NO];
-    [self.delegate dataManagerDelegate:self shouldLockInterace:NO];
-    [self.delegate dataManagerDelegate:self shouldReload:YES];
 }
 
-- (void)ubiquityIdentityDidChangeWithNotification:(NSNotification *)notification
-{
-    [self updateStoredAccessIdentity];
-}
 
 #pragma mark - Managed Object Context
 - (NSManagedObjectContext *)managedObjectContext
@@ -317,9 +271,6 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
               addPersistentStoreError, [addPersistentStoreError userInfo]);
         abort();
     }
-    
-    // Register or re-register for notifications with the new persistent store coordinator.
-    [self registerForCloudNotificationsWithPersistentStoreCoordinator:persistentStoreCoordinator];
     
     // Output variables
     *persistentStoreCoordinatorOutput = persistentStoreCoordinator;
@@ -439,9 +390,6 @@ persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordi
 {
     _storageType = persistentStorageType;
     self.userDefaults.persistentStorageType = persistentStorageType;
-    if ([self.delegate respondsToSelector:@selector(dataManagerDelegate:didChangeToStorageType:)]) {
-        [self.delegate dataManagerDelegate:self didChangeToStorageType:persistentStorageType];
-    }
 }
 
 - (NSURL *)applicationDocumentsDirectory
@@ -460,16 +408,6 @@ persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordi
     self.persistentStore = nil;
     self.persistentStoreCoordinator = nil;
 }
-
-- (void)updateStoredAccessIdentity
-{
-    id previousUbiquityIdentity = self.userDefaults.storedAccessIdentity;
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    id nextUbiquityIdentity = [fileManager ubiquityIdentityToken];
-    [self.delegate dataManagerDelegate:self didChangeUbiquityTokenFrom:previousUbiquityIdentity toUbiquityToken:nextUbiquityIdentity];
-    self.userDefaults.storedAccessIdentity = nextUbiquityIdentity;
-}
-
 
 - (void)logTransitionTypeFromUserInfo:(NSDictionary *)userInfo
 {

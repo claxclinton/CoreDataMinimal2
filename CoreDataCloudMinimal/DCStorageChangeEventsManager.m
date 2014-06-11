@@ -8,28 +8,28 @@
 
 @import CoreData;
 
-#import "DCStorageEventNotificationManager.h"
+#import "DCStorageChangeEventsManager.h"
 
 @interface DCDelegateAndCoordinator : NSObject
-@property (strong, nonatomic) id <DCStorageEventNotificationManagerDelegate> delegate;
+@property (strong, nonatomic) id <DCStorageChangeEventsManagerDelegate> delegate;
 @property (strong, nonatomic) NSPersistentStoreCoordinator *coordinator;
 @end
 
 @implementation DCDelegateAndCoordinator
 @end
 
-@interface DCStorageEventNotificationManager ()
+@interface DCStorageChangeEventsManager ()
 @property (strong, nonatomic) NSMutableArray *delegateAndCoordinators;
 @property (strong, nonatomic) NSMutableArray *registeredCoordinators;
 @property (strong, nonatomic) NSNotificationCenter *notificationCenter;
 @property (assign, nonatomic) BOOL registeredForNilCoordinator;
 @end
 
-@implementation DCStorageEventNotificationManager
+@implementation DCStorageChangeEventsManager
 #pragma mark - Life Cycle
 + (instancetype)storageEventManager
 {
-    return [[DCStorageEventNotificationManager alloc] init];
+    return [[DCStorageChangeEventsManager alloc] init];
 }
 
 - (instancetype)init
@@ -54,7 +54,7 @@
 }
 
 #pragma mark - Public Methods
-- (void)addDelegate:(id <DCStorageEventNotificationManagerDelegate>)delegate
+- (void)addDelegate:(id <DCStorageChangeEventsManagerDelegate>)delegate
      forCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordinator
 {
     NSParameterAssert(delegate != nil);
@@ -64,7 +64,7 @@
     [self.delegateAndCoordinators addObject:delegateAndCoordinator];
 }
 
-- (void)removeDelegate:(id <DCStorageEventNotificationManagerDelegate>)delegate
+- (void)removeDelegate:(id <DCStorageChangeEventsManagerDelegate>)delegate
         forCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordinator
 {
     NSParameterAssert(delegate != nil);
@@ -143,8 +143,8 @@
 {
     NSPersistentStoreCoordinator *coordinatorFromNotification = (NSPersistentStoreCoordinator *)notification.object;
     __weak typeof(self)weakSelf = self;
-    [self forAllDelegatesWithCoordinator:coordinatorFromNotification applyBlock:^(id<DCStorageEventNotificationManagerDelegate> delegate) {
-        [delegate storageEventNotificationManager:weakSelf
+    [self forAllDelegatesWithCoordinator:coordinatorFromNotification applyBlock:^(id<DCStorageChangeEventsManagerDelegate> delegate) {
+        [delegate storageChangeEventsManager:weakSelf
            didReceiveStoresWillChangeNotification:notification
                        persistentStoreCoordinator:coordinatorFromNotification];
     }];
@@ -154,8 +154,8 @@
 {
     NSPersistentStoreCoordinator *coordinatorFromNotification = (NSPersistentStoreCoordinator *)notification.object;
     __weak typeof(self)weakSelf = self;
-    [self forAllDelegatesWithCoordinator:coordinatorFromNotification applyBlock:^(id<DCStorageEventNotificationManagerDelegate> delegate) {
-        [delegate storageEventNotificationManager:weakSelf
+    [self forAllDelegatesWithCoordinator:coordinatorFromNotification applyBlock:^(id<DCStorageChangeEventsManagerDelegate> delegate) {
+        [delegate storageChangeEventsManager:weakSelf
             didReceiveStoresDidChangeNotification:notification
                        persistentStoreCoordinator:coordinatorFromNotification];
     }];
@@ -165,8 +165,8 @@
 {
     NSPersistentStoreCoordinator *coordinatorFromNotification = (NSPersistentStoreCoordinator *)notification.object;
     __weak typeof(self)weakSelf = self;
-    [self forAllDelegatesWithCoordinator:coordinatorFromNotification applyBlock:^(id<DCStorageEventNotificationManagerDelegate> delegate) {
-        [delegate storageEventNotificationManager:weakSelf
+    [self forAllDelegatesWithCoordinator:coordinatorFromNotification applyBlock:^(id<DCStorageChangeEventsManagerDelegate> delegate) {
+        [delegate storageChangeEventsManager:weakSelf
                     didReceiveContentImportNotification:notification
                        persistentStoreCoordinator:coordinatorFromNotification];
     }];
@@ -186,7 +186,7 @@
 }
 
 - (void)forAllDelegatesWithCoordinator:(NSPersistentStoreCoordinator *)coordinator
-                            applyBlock:(void (^)(id <DCStorageEventNotificationManagerDelegate>delegate))block
+                            applyBlock:(void (^)(id <DCStorageChangeEventsManagerDelegate>delegate))block
 {
     NSParameterAssert(block != nil);
     for (DCDelegateAndCoordinator *delegateAndCoordinator in self.delegateAndCoordinators) {

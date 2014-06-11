@@ -19,7 +19,7 @@
 @property (strong, nonatomic) IBOutlet UISegmentedControl *persistentStoreSegmentedControl;
 @property (strong, nonatomic) IBOutlet UIButton *accessDataButton;
 @property (strong, nonatomic) DCCoreDataManager *coreDataManager;
-@property (assign, nonatomic) DCPersistentStorageType persistentStorageType;
+@property (assign, nonatomic) DCStorageType persistentStorageType;
 @property (strong, nonatomic) NSDictionary *persistentStorageTypeDescription;
 @property (strong, nonatomic) DCSharedServices *sharedServices;
 @property (strong, nonatomic) DCUserDefaults *userDefaults;
