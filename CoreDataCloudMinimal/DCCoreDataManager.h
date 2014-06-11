@@ -21,7 +21,8 @@ didRequestStorageTypeFrom:(NSUInteger)availableStorageTypes
 - (void)coreDataManager:(DCCoreDataManager *)coreDataManager
      didAllowDataAccess:(BOOL)dataAccessAllowed;
 - (void)coreDataManager:(DCCoreDataManager *)coreDataManager
-didChangeUbiquitousIdentityTo:(id)ubiquitousIdentity;
+didChangeUbiquitousIdentityTo:(id)ubiquitousIdentity
+requestStorageTypeBlock:(void (^)(DCStorageType selectedStorageType))block;
 @end
 
 @interface DCCoreDataManager : NSObject

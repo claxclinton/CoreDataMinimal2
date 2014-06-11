@@ -127,14 +127,6 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
 }
 
 #pragma mark - Add Remove Storage Methods
-- (void)removeStore
-{
-    self.storageType = DCStorageTypeNone;
-    [self.managedObjectContext reset];
-    self.managedObjectContext = nil;
-    [self clearAllPersistentStoresAndPersistentStoreCoordinators];
-}
-
 - (void)addStoreWithStorageType:(DCStorageType)storageType
 {
     if (storageType == DCStorageTypeLocal) {
@@ -189,7 +181,7 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
      error:&removePersistentStoreError];
 }
 
-#pragma mark - Register And Unregister For Notifications
+#pragma mark - Register And Unregister For Ubiquity Identity And Storage Changes
 - (void)registerForUbiquityIdentityChanges
 {
     [self.sharedServices.ubiquityIdentityManager addDelegate:self];
@@ -217,7 +209,14 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
           didChangeFromIdentity:(id <NSObject, NSCopying, NSCoding>)fromIdentity
                      toIdentity:(id <NSObject, NSCopying, NSCoding>)toIdentity
 {
-    
+    if (self.storageType == DCStorageTypeCloud) {
+        __weak typeof(self)weakSelf = self;
+        [self.delegate coreDataManager:self
+         didChangeUbiquitousIdentityTo:toIdentity
+               requestStorageTypeBlock:^(DCStorageType selectedStorageType) {
+                   [weakSelf addStoreWithStorageType:selectedStorageType];
+               }];
+    }
 }
 
 #pragma mark - Storage Change Events Delegate

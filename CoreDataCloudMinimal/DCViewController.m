@@ -70,7 +70,7 @@
 #pragma mark - User Actions
 - (IBAction)activateCoreDataButtonActionWithSender:(id)sender
 {
-    [self.coreDataManager activate];
+    [self.coreDataManager addPersistentStore];
 }
 
 - (IBAction)accessDataButtonActionWithSender:(id)sender
@@ -117,7 +117,15 @@ didRequestStorageTypeFrom:(NSUInteger)availableStorageTypes
 
 - (void)coreDataManager:(DCCoreDataManager *)coreDataManager
 didChangeUbiquitousIdentityTo:(id)ubiquitousIdentity
+requestStorageTypeBlock:(void (^)(DCStorageType selectedStorageType))block
 {
+    NSString *title = @"iCloud Account Changed";
+    NSString *message = @"You can now choose to use the local data, "
+    "or the data from the new iCloud account.";
+    UIAlertView *alertView = [[UIAlertView alloc]
+                              initWithTitle:title message:message delegate:self
+                              cancelButtonTitle:nil otherButtonTitles:@"Local", @"iCloud", nil];
+    [alertView show];
 }
 
 #pragma mark - Alert View Delegate
@@ -155,7 +163,7 @@ didChangeUbiquitousIdentityTo:(id)ubiquitousIdentity
 
 - (void)setupCloudQuestionStatusSegmentedControl
 {
-    NSInteger segmentIndex = ([self.userDefaults.hasAskedForCloudStorage]) ? 1 : 0;
+    NSInteger segmentIndex = (self.userDefaults.hasAskedForCloudStorage) ? 1 : 0;
     [self.cloudAccessStatusSegmentedControl setSelectedSegmentIndex:segmentIndex];
 }
 
