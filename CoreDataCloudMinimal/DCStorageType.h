@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Claes Lillieskold. All rights reserved.
 //
 
-typedef NS_ENUM(NSUInteger, DCStorageType) {
+typedef NS_OPTIONS(NSUInteger, DCStorageType) {
     DCStorageTypeNone = 0,
-    DCStorageTypeLocal,
-    DCStorageTypeCloud
+    DCStorageTypeLocal = 1,
+    DCStorageTypeCloud = 2
 };

@@ -14,7 +14,8 @@
 
 @protocol DCCoreDataManagerDelegate <NSObject>
 - (void)coreDataManager:(DCCoreDataManager *)coreDataManager
-  didRequestStorageType:(DCStorageType *)storageType;
+  didRequestStorageType:(DCStorageType *)storageType
+       fromStorageTypes:(NSUInteger)availableStorageTypes;
 - (void)coreDataManager:(DCCoreDataManager *)coreDataManager
       didAddStorageType:(DCStorageType)storageType;
 - (void)coreDataManager:(DCCoreDataManager *)coreDataManager
