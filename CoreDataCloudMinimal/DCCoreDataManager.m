@@ -73,6 +73,10 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
 }
 
 #pragma mark - Public Methods
+- (void)activate
+{
+}
+
 - (void)addPersistentStore
 {
 }
