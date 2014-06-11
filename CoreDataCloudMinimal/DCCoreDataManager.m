@@ -203,6 +203,7 @@ static NSString * const DCStoreNameCloud = @"ModelStorage-Cloud.sqlite";
                }];
     } else {
         [self addPersistentStoreWithLocalStoreAsDefault:NO];
+        [self setDataAccessAllowed:YES updateDelegateIfChange:YES updateDelegateForced:NO];
     }
 }
 

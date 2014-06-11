@@ -114,6 +114,7 @@ didRequestStorageTypeFrom:(NSUInteger)availableStorageTypes
      didAllowDataAccess:(BOOL)dataAccessAllowed
 {
     self.dataAccessAllowed = dataAccessAllowed;
+    [self configureAccessDataButton];
 }
 
 - (void)coreDataManager:(DCCoreDataManager *)coreDataManager
