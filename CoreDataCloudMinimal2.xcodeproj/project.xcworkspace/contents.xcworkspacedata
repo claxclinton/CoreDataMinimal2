@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:CoreDataCloudMinimal.xcodeproj">
+      location = "self:CoreDataCloudMinimal2.xcodeproj">
    </FileRef>
 </Workspace>

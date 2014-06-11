@@ -13,11 +13,12 @@
 #import "DCDataTableViewController.h"
 
 @interface DCViewController () <DCDataManagerDelegate>
-@property (strong, nonatomic) IBOutlet UISegmentedControl *systemCloudAccessSegmentedControl;
-@property (strong, nonatomic) IBOutlet UISegmentedControl *storageBackendSegmentedControl;
-@property (strong, nonatomic) IBOutlet UISegmentedControl *persistentStoreTypeSegmentedControl;
+@property (strong, nonatomic) IBOutlet UISegmentedControl *cloudAccessStatusSegmentedControl;
+@property (strong, nonatomic) IBOutlet UISegmentedControl *persistentStoreStatusSegmentedControl;
+@property (strong, nonatomic) IBOutlet UISegmentedControl *launchStateStatusSegmentedControl;
+@property (strong, nonatomic) IBOutlet UISegmentedControl *persistentStoreSegmentedControl;
+@property (strong, nonatomic) IBOutlet UIButton *accessDataButton;
 @property (strong, nonatomic) DCDataManager *dataManager;
-@property (strong, nonatomic) UIButton *selectedButton;
 @property (assign, nonatomic) DCPersistentStorageType persistentStorageType;
 @property (strong, nonatomic) NSDictionary *persistentStorageTypeDescription;
 @property (strong, nonatomic) DCSharedServices *sharedServices;
@@ -34,9 +35,11 @@
                                               @(DCPersistentStorageTypeLocal): @"Local Persistent Store",
                                               @(DCPersistentStorageTypeCloud): @"Cloud Persistent Store"};
     self.userDefaults = self.sharedServices.userDefaults;
-    [self setupSystemCloudAccessSegmentedControl];
-    [self setupStorageBackendSegmentedControl];
-    [self setStoredStorageType];
+    [self setupCloudAccessStatusSegmentedControl];
+    [self setupPersistentStoreStatusSegmentedControl];
+    [self setupLaunchStateStatusSegmentedControl];
+    [self setupPersistentStoreSegmentedControl];
+    [self setupAccessDataButton];
 }
 
 #pragma mark - Navigation
@@ -57,20 +60,8 @@
 }
 
 #pragma mark - User Actions
-- (IBAction)storageBackendSegmentedControlActionWithSender:(id)sender
+- (IBAction)persistentStoreSegmentedControlActionWithSender:(id)sender
 {
-    BOOL usingCloudStorageBackend = (self.storageBackendSegmentedControl.selectedSegmentIndex == 1);
-    self.userDefaults.usingCloudStorageBackend = usingCloudStorageBackend;
-    [self setupStorageBackendSegmentedControl];
-    NSLog(@"CLLI: %s allow:%@", __PRETTY_FUNCTION__, (usingCloudStorageBackend) ? @"YES" : @"NO");
-}
-
-- (IBAction)persistentStoreTypeSegmentedControlActionWithSender:(id)sender
-{
-    NSInteger selectedSegmentIndex = self.persistentStoreTypeSegmentedControl.selectedSegmentIndex;
-    DCPersistentStorageType storageType = (DCPersistentStorageType)selectedSegmentIndex;
-    [self applyStorageType:storageType];
-    NSLog(@"CLLI: %s Change To:\"%@\"", __PRETTY_FUNCTION__, self.persistentStorageTypeDescription[@(storageType)]);
 }
 
 - (IBAction)accessDataButtonActionWithSender:(id)sender
@@ -79,38 +70,6 @@
 }
 
 #pragma mark - Storage Change Method
-- (void)removeStorage
-{
-    [self.dataManager removeStorage];
-}
-
-- (void)addLocalStorage
-{
-    [self.dataManager addLocalStorage];
-}
-
-- (void)addCloudStorage
-{
-    if (!self.userDefaults.usingCloudStorageBackend) {
-        self.persistentStorageType = self.persistentStorageType;
-        UIAlertView *alertView = [[UIAlertView alloc]
-                                  initWithTitle:@"Missing App iCloud Permissions"
-                                  message:@"Allow the app to access iCloud from within the app."
-                                  delegate:nil cancelButtonTitle:@"Done" otherButtonTitles:nil];
-        [alertView show];
-    } else {
-        if (self.userDefaults.storedAccessIdentity == nil) {
-            UIAlertView *alertView = [[UIAlertView alloc]
-                                      initWithTitle:@"App Misses System Access To iCloud"
-                                      message:@"Since the app misses system access to iCloud, your changes "
-                                      "will not be shared to other devices until system access is available. "
-                                      "Check that you are logged in and app has access to \"Documents & Data\"."
-                                      delegate:nil cancelButtonTitle:@"Done" otherButtonTitles:nil];
-            [alertView show];
-        }
-        [self.dataManager addCloudStorage];
-    }
-}
 
 #pragma mark - Data Manager
 - (void)dataManagerDelegate:(DCDataManager *)dataManager
@@ -143,48 +102,27 @@
 {
     NSLog(@"CLLI: %s from:\"%@\" to:\"%@\"", __PRETTY_FUNCTION__, fromToken, toToken);
     NSInteger selectedSegmentIndex = (toToken == nil) ? 0 : 1;
-    [self.systemCloudAccessSegmentedControl setSelectedSegmentIndex:selectedSegmentIndex];
+    [self.cloudAccessStatusSegmentedControl setSelectedSegmentIndex:selectedSegmentIndex];
 }
 
-#pragma mark - Helper Methods
-- (void)setupSystemCloudAccessSegmentedControl
+#pragma mark - UI Setup Methods
+- (void)setupCloudAccessStatusSegmentedControl
 {
-    id ubiquityIdentity = self.userDefaults.storedAccessIdentity;
-    NSInteger segmentIndex = (ubiquityIdentity == nil) ? 0 : 1;
-    [self.systemCloudAccessSegmentedControl setSelectedSegmentIndex:segmentIndex];
 }
 
-- (void)setupStorageBackendSegmentedControl
+- (void)setupPersistentStoreStatusSegmentedControl
 {
-    BOOL appCloudAccessAllowed = self.userDefaults.usingCloudStorageBackend;
-    NSInteger segmentIndex = (appCloudAccessAllowed) ? 1 : 0;
-    [self.storageBackendSegmentedControl setSelectedSegmentIndex:segmentIndex];
 }
 
-- (void)setPersistentStorageType:(DCPersistentStorageType)storageState
+- (void)setupLaunchStateStatusSegmentedControl
 {
-    [self.persistentStoreTypeSegmentedControl setSelectedSegmentIndex:storageState];
 }
 
-- (void)applyStorageType:(DCPersistentStorageType)storageType
+- (void)setupPersistentStoreSegmentedControl
 {
-    switch (storageType) {
-        case DCPersistentStorageTypeNone:
-            [self removeStorage];
-            break;
-        case DCPersistentStorageTypeLocal:
-            [self addLocalStorage];
-            break;
-        case DCPersistentStorageTypeCloud:
-            [self addCloudStorage];
-            break;
-    }
 }
 
-- (void)setStoredStorageType
+- (void)setupAccessDataButton
 {
-    DCPersistentStorageType persistentStorageType = self.userDefaults.persistentStorageType;
-    [self.persistentStoreTypeSegmentedControl setSelectedSegmentIndex:persistentStorageType];
-    [self applyStorageType:persistentStorageType];
 }
 @end

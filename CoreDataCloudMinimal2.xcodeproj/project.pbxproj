@@ -51,23 +51,23 @@
 		4B4A90191942CFA9005ADA9B /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		4B4A90211942D06A005ADA9B /* DCDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCDataManager.h; sourceTree = "<group>"; };
 		4B4A90221942D06A005ADA9B /* DCDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DCDataManager.m; sourceTree = "<group>"; };
-		4BC0D24419407D8B00E2142B /* CoreDataCloudMinimal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoreDataCloudMinimal.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4BC0D24419407D8B00E2142B /* CoreDataCloudMinimal2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoreDataCloudMinimal2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BC0D24719407D8B00E2142B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		4BC0D24919407D8B00E2142B /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		4BC0D24B19407D8B00E2142B /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		4BC0D24F19407D8B00E2142B /* CoreDataCloudMinimal-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CoreDataCloudMinimal-Info.plist"; sourceTree = "<group>"; };
+		4BC0D24F19407D8B00E2142B /* CoreDataCloudMinimal2-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CoreDataCloudMinimal2-Info.plist"; sourceTree = "<group>"; };
 		4BC0D25119407D8B00E2142B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		4BC0D25319407D8B00E2142B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		4BC0D25519407D8B00E2142B /* CoreDataCloudMinimal-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CoreDataCloudMinimal-Prefix.pch"; sourceTree = "<group>"; };
+		4BC0D25519407D8B00E2142B /* CoreDataCloudMinimal2-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CoreDataCloudMinimal2-Prefix.pch"; sourceTree = "<group>"; };
 		4BC0D25619407D8B00E2142B /* DCAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DCAppDelegate.h; sourceTree = "<group>"; };
 		4BC0D25719407D8B00E2142B /* DCAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DCAppDelegate.m; sourceTree = "<group>"; };
 		4BC0D25D19407D8B00E2142B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPad.storyboard; sourceTree = "<group>"; };
 		4BC0D25F19407D8B00E2142B /* DCViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DCViewController.h; sourceTree = "<group>"; };
 		4BC0D26019407D8B00E2142B /* DCViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DCViewController.m; sourceTree = "<group>"; };
 		4BC0D26219407D8B00E2142B /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		4BC0D26819407D8B00E2142B /* CoreDataCloudMinimalTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CoreDataCloudMinimalTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4BC0D26819407D8B00E2142B /* CoreDataCloudMinimal2Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CoreDataCloudMinimal2Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BC0D26919407D8B00E2142B /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		4BC0D27119407D8B00E2142B /* CoreDataCloudMinimalTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CoreDataCloudMinimalTests-Info.plist"; sourceTree = "<group>"; };
+		4BC0D27119407D8B00E2142B /* CoreDataCloudMinimal2Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CoreDataCloudMinimal2Tests-Info.plist"; sourceTree = "<group>"; };
 		4BC0D27319407D8B00E2142B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		4BC0D27519407D8B00E2142B /* CoreDataCloudMinimalTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CoreDataCloudMinimalTests.m; sourceTree = "<group>"; };
 		4BC0D27F1940820900E2142B /* DCDataTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCDataTableViewController.h; sourceTree = "<group>"; };
@@ -113,8 +113,8 @@
 		4BC0D24519407D8B00E2142B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				4BC0D24419407D8B00E2142B /* CoreDataCloudMinimal.app */,
-				4BC0D26819407D8B00E2142B /* CoreDataCloudMinimalTests.xctest */,
+				4BC0D24419407D8B00E2142B /* CoreDataCloudMinimal2.app */,
+				4BC0D26819407D8B00E2142B /* CoreDataCloudMinimal2Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -158,10 +158,10 @@
 			isa = PBXGroup;
 			children = (
 				4B1355B41942EB3200B2E01D /* CoreDataCloudMinimal.entitlements */,
-				4BC0D24F19407D8B00E2142B /* CoreDataCloudMinimal-Info.plist */,
+				4BC0D24F19407D8B00E2142B /* CoreDataCloudMinimal2-Info.plist */,
 				4BC0D25019407D8B00E2142B /* InfoPlist.strings */,
 				4BC0D25319407D8B00E2142B /* main.m */,
-				4BC0D25519407D8B00E2142B /* CoreDataCloudMinimal-Prefix.pch */,
+				4BC0D25519407D8B00E2142B /* CoreDataCloudMinimal2-Prefix.pch */,
 				4B4A90181942CFA9005ADA9B /* Model.xcdatamodeld */,
 				4B4053D71943977600892360 /* DCData.h */,
 				4B4053D81943977600892360 /* DCData.m */,
@@ -181,7 +181,7 @@
 		4BC0D27019407D8B00E2142B /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				4BC0D27119407D8B00E2142B /* CoreDataCloudMinimalTests-Info.plist */,
+				4BC0D27119407D8B00E2142B /* CoreDataCloudMinimal2Tests-Info.plist */,
 				4BC0D27219407D8B00E2142B /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
@@ -190,9 +190,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		4BC0D24319407D8B00E2142B /* CoreDataCloudMinimal */ = {
+		4BC0D24319407D8B00E2142B /* CoreDataCloudMinimal2 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4BC0D27919407D8B00E2142B /* Build configuration list for PBXNativeTarget "CoreDataCloudMinimal" */;
+			buildConfigurationList = 4BC0D27919407D8B00E2142B /* Build configuration list for PBXNativeTarget "CoreDataCloudMinimal2" */;
 			buildPhases = (
 				4BC0D24019407D8B00E2142B /* Sources */,
 				4BC0D24119407D8B00E2142B /* Frameworks */,
@@ -202,14 +202,14 @@
 			);
 			dependencies = (
 			);
-			name = CoreDataCloudMinimal;
+			name = CoreDataCloudMinimal2;
 			productName = CoreDataCloudMinimal;
-			productReference = 4BC0D24419407D8B00E2142B /* CoreDataCloudMinimal.app */;
+			productReference = 4BC0D24419407D8B00E2142B /* CoreDataCloudMinimal2.app */;
 			productType = "com.apple.product-type.application";
 		};
-		4BC0D26719407D8B00E2142B /* CoreDataCloudMinimalTests */ = {
+		4BC0D26719407D8B00E2142B /* CoreDataCloudMinimal2Tests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4BC0D27C19407D8B00E2142B /* Build configuration list for PBXNativeTarget "CoreDataCloudMinimalTests" */;
+			buildConfigurationList = 4BC0D27C19407D8B00E2142B /* Build configuration list for PBXNativeTarget "CoreDataCloudMinimal2Tests" */;
 			buildPhases = (
 				4BC0D26419407D8B00E2142B /* Sources */,
 				4BC0D26519407D8B00E2142B /* Frameworks */,
@@ -220,9 +220,9 @@
 			dependencies = (
 				4BC0D26E19407D8B00E2142B /* PBXTargetDependency */,
 			);
-			name = CoreDataCloudMinimalTests;
+			name = CoreDataCloudMinimal2Tests;
 			productName = CoreDataCloudMinimalTests;
-			productReference = 4BC0D26819407D8B00E2142B /* CoreDataCloudMinimalTests.xctest */;
+			productReference = 4BC0D26819407D8B00E2142B /* CoreDataCloudMinimal2Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -248,7 +248,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 4BC0D23F19407D8B00E2142B /* Build configuration list for PBXProject "CoreDataCloudMinimal" */;
+			buildConfigurationList = 4BC0D23F19407D8B00E2142B /* Build configuration list for PBXProject "CoreDataCloudMinimal2" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -261,8 +261,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				4BC0D24319407D8B00E2142B /* CoreDataCloudMinimal */,
-				4BC0D26719407D8B00E2142B /* CoreDataCloudMinimalTests */,
+				4BC0D24319407D8B00E2142B /* CoreDataCloudMinimal2 */,
+				4BC0D26719407D8B00E2142B /* CoreDataCloudMinimal2Tests */,
 			);
 		};
 /* End PBXProject section */
@@ -319,7 +319,7 @@
 /* Begin PBXTargetDependency section */
 		4BC0D26E19407D8B00E2142B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 4BC0D24319407D8B00E2142B /* CoreDataCloudMinimal */;
+			target = 4BC0D24319407D8B00E2142B /* CoreDataCloudMinimal2 */;
 			targetProxy = 4BC0D26D19407D8B00E2142B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -439,9 +439,9 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = CoreDataCloudMinimal/CoreDataCloudMinimal.entitlements;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "CoreDataCloudMinimal/CoreDataCloudMinimal-Prefix.pch";
-				INFOPLIST_FILE = "CoreDataCloudMinimal/CoreDataCloudMinimal-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				GCC_PREFIX_HEADER = "CoreDataCloudMinimal/CoreDataCloudMinimal2-Prefix.pch";
+				INFOPLIST_FILE = "CoreDataCloudMinimal/CoreDataCloudMinimal2-Info.plist";
+				PRODUCT_NAME = CoreDataCloudMinimal2;
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
@@ -454,9 +454,9 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = CoreDataCloudMinimal/CoreDataCloudMinimal.entitlements;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "CoreDataCloudMinimal/CoreDataCloudMinimal-Prefix.pch";
-				INFOPLIST_FILE = "CoreDataCloudMinimal/CoreDataCloudMinimal-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				GCC_PREFIX_HEADER = "CoreDataCloudMinimal/CoreDataCloudMinimal2-Prefix.pch";
+				INFOPLIST_FILE = "CoreDataCloudMinimal/CoreDataCloudMinimal2-Info.plist";
+				PRODUCT_NAME = CoreDataCloudMinimal2;
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
@@ -477,8 +477,8 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = "CoreDataCloudMinimalTests/CoreDataCloudMinimalTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				INFOPLIST_FILE = "CoreDataCloudMinimalTests/CoreDataCloudMinimal2Tests-Info.plist";
+				PRODUCT_NAME = CoreDataCloudMinimal2Tests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -495,8 +495,8 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CoreDataCloudMinimal/CoreDataCloudMinimal-Prefix.pch";
-				INFOPLIST_FILE = "CoreDataCloudMinimalTests/CoreDataCloudMinimalTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				INFOPLIST_FILE = "CoreDataCloudMinimalTests/CoreDataCloudMinimal2Tests-Info.plist";
+				PRODUCT_NAME = CoreDataCloudMinimal2Tests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -505,7 +505,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		4BC0D23F19407D8B00E2142B /* Build configuration list for PBXProject "CoreDataCloudMinimal" */ = {
+		4BC0D23F19407D8B00E2142B /* Build configuration list for PBXProject "CoreDataCloudMinimal2" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4BC0D27719407D8B00E2142B /* Debug */,
@@ -514,7 +514,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		4BC0D27919407D8B00E2142B /* Build configuration list for PBXNativeTarget "CoreDataCloudMinimal" */ = {
+		4BC0D27919407D8B00E2142B /* Build configuration list for PBXNativeTarget "CoreDataCloudMinimal2" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4BC0D27A19407D8B00E2142B /* Debug */,
@@ -523,7 +523,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		4BC0D27C19407D8B00E2142B /* Build configuration list for PBXNativeTarget "CoreDataCloudMinimalTests" */ = {
+		4BC0D27C19407D8B00E2142B /* Build configuration list for PBXNativeTarget "CoreDataCloudMinimal2Tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4BC0D27D19407D8B00E2142B /* Debug */,
