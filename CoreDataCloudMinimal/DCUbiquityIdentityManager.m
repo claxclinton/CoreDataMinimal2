@@ -52,7 +52,7 @@
 - (void)savePendingChangedIdentity
 {
     if (self.pendingIdentityChange) {
-        self.userDefaults.ubiquityIdentity = self.currentIdentity;
+        self.userDefaults.storedAccessIdentity = self.currentIdentity;
         self.pendingIdentityChange = NO;
     }
 }
@@ -115,11 +115,11 @@
 
 - (id <NSObject, NSCopying, NSCoding>)storedIdentity
 {
-    return self.userDefaults.ubiquityIdentity;
+    return self.userDefaults.storedAccessIdentity;
 }
 
 - (void)setStoredIdentity:(id<NSObject,NSCopying,NSCoding>)storedIdentity
 {
-    self.userDefaults.ubiquityIdentity = storedIdentity;
+    self.userDefaults.storedAccessIdentity = storedIdentity;
 }
 @end

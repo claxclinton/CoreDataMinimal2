@@ -10,11 +10,14 @@
 
 @class DCUserDefaults;
 @class DCUbiquityIdentityManager;
+@class DCStorageEventNotificationManager;
+
 
 @interface DCSharedServices : NSObject
 @property (strong, nonatomic) NSBundle *mainBundle;
 @property (strong, nonatomic) DCUserDefaults *userDefaults;
 @property (strong, nonatomic) DCUbiquityIdentityManager *ubiquityIdentityManager;
+@property (strong, nonatomic) DCStorageEventNotificationManager *storageEventNotificationManager;
 @property (readonly, nonatomic) BOOL persistentStore;
 
 + (instancetype)sharedServicesWithPersistentStore:(BOOL)persistentStore;

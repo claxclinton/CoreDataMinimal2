@@ -9,6 +9,7 @@
 #import "DCSharedServices.h"
 #import "DCUserDefaults.h"
 #import "DCUbiquityIdentityManager.h"
+#import "DCStorageEventNotificationManager.h"
 
 static DCSharedServices *DCSingleton = nil;
 static dispatch_once_t DCServicesCreatedOnceToken;
@@ -68,5 +69,13 @@ static dispatch_once_t DCServicesCreatedOnceToken;
         _ubiquityIdentityManager = [DCUbiquityIdentityManager ubiquityIdentityManager];
     }
     return _ubiquityIdentityManager;
+}
+
+- (DCStorageEventNotificationManager *)storageEventNotificationManager
+{
+    if (_storageEventNotificationManager == nil) {
+        _storageEventNotificationManager = [DCStorageEventNotificationManager storageEventManager];
+    }
+    return _storageEventNotificationManager;
 }
 @end
