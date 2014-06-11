@@ -8,7 +8,7 @@
 
 @import CoreData;
 
-#import "DCDataManager.h"
+#import "DCCoreDataManager.h"
 #import "DCSharedServices.h"
 #import "DCUserDefaults.h"
 #import "DCData.h"
@@ -17,9 +17,9 @@ static NSString * const DCUbiquitousContentName = @"CoreDataCloudMinimal";
 static NSString * const DCStoreNameLocal = @"Data-Local.sqlite";
 static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
 
-@interface DCDataManager ()
+@interface DCCoreDataManager ()
 @property (copy, nonatomic) NSString *modelName;
-@property (weak, nonatomic) id <DCDataManagerDelegate> delegate;
+@property (weak, nonatomic) id <DCCoreDataManagerDelegate> delegate;
 @property (strong, nonatomic) DCSharedServices *sharedServices;
 @property (strong, nonatomic) DCUserDefaults *userDefaults;
 @property (assign, nonatomic) DCPersistentStorageType persistentStorageType;
@@ -33,25 +33,25 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
 @property (assign, nonatomic) BOOL registeredForNotificationUbiquitousIdentityDidChange;
 @end
 
-@interface DCDataManager ()
+@interface DCCoreDataManager ()
 @property (strong, nonatomic) NSPersistentStoreCoordinator *cloudPersistentStoreCoordinator;
 @property (strong, nonatomic) NSPersistentStore *cloudPersistentStore;
 @end
 
-@interface DCDataManager ()
+@interface DCCoreDataManager ()
 @property (strong, nonatomic) NSPersistentStoreCoordinator *localPersistentStoreCoordinator;
 @property (strong, nonatomic) NSPersistentStore *localPersistentStore;
 @end
 
-@implementation DCDataManager
+@implementation DCCoreDataManager
 #pragma mark - Create And Init
 + (instancetype)dataManagerWithModelName:(NSString *)modelName
-                                delegate:(id <DCDataManagerDelegate>)delegate
+                                delegate:(id <DCCoreDataManagerDelegate>)delegate
 {
-    return [[DCDataManager alloc] initWithModelName:modelName delegate:delegate];
+    return [[DCCoreDataManager alloc] initWithModelName:modelName delegate:delegate];
 }
 
-- (instancetype)initWithModelName:(NSString *)modelName delegate:(id <DCDataManagerDelegate>)delegate
+- (instancetype)initWithModelName:(NSString *)modelName delegate:(id <DCCoreDataManagerDelegate>)delegate
 {
     self = [super init];
     if (self != nil) {
@@ -108,7 +108,6 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
 
 - (void)addCloudStorage
 {
-    NSAssert(self.userDefaults.usingCloudStorageBackend, @"The app must be configured to use iCloud.");
     if (self.persistentStorageType != DCPersistentStorageTypeCloud) {
         [self.delegate dataManagerDelegate:self accessDataAllowed:NO];
         [self.managedObjectContext reset];

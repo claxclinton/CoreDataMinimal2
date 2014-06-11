@@ -11,7 +11,7 @@
 		4B4053D91943977600892360 /* DCData.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B4053D81943977600892360 /* DCData.m */; };
 		4B4A90151942CEF7005ADA9B /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B4A90171942CEF7005ADA9B /* Main_iPhone.storyboard */; };
 		4B4A901A1942CFA9005ADA9B /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4B4A90181942CFA9005ADA9B /* Model.xcdatamodeld */; };
-		4B4A90231942D06A005ADA9B /* DCDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B4A90221942D06A005ADA9B /* DCDataManager.m */; };
+		4B4A90231942D06A005ADA9B /* DCCoreDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B4A90221942D06A005ADA9B /* DCCoreDataManager.m */; };
 		4BC0D24819407D8B00E2142B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BC0D24719407D8B00E2142B /* Foundation.framework */; };
 		4BC0D24A19407D8B00E2142B /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BC0D24919407D8B00E2142B /* CoreGraphics.framework */; };
 		4BC0D24C19407D8B00E2142B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BC0D24B19407D8B00E2142B /* UIKit.framework */; };
@@ -42,15 +42,14 @@
 
 /* Begin PBXFileReference section */
 		4B1355B41942EB3200B2E01D /* CoreDataCloudMinimal.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = CoreDataCloudMinimal.entitlements; sourceTree = "<group>"; };
-		4B2358601945F3BA0044C599 /* DCPersistentStorageType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DCPersistentStorageType.h; sourceTree = "<group>"; };
 		4B4053D41943745700892360 /* DCUserDefaults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCUserDefaults.h; sourceTree = "<group>"; };
 		4B4053D51943745700892360 /* DCUserDefaults.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DCUserDefaults.m; sourceTree = "<group>"; };
 		4B4053D71943977600892360 /* DCData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCData.h; sourceTree = "<group>"; };
 		4B4053D81943977600892360 /* DCData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DCData.m; sourceTree = "<group>"; };
 		4B4A90161942CEF7005ADA9B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPhone.storyboard; sourceTree = "<group>"; };
 		4B4A90191942CFA9005ADA9B /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
-		4B4A90211942D06A005ADA9B /* DCDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCDataManager.h; sourceTree = "<group>"; };
-		4B4A90221942D06A005ADA9B /* DCDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DCDataManager.m; sourceTree = "<group>"; };
+		4B4A90211942D06A005ADA9B /* DCCoreDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCCoreDataManager.h; sourceTree = "<group>"; };
+		4B4A90221942D06A005ADA9B /* DCCoreDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DCCoreDataManager.m; sourceTree = "<group>"; };
 		4BC0D24419407D8B00E2142B /* CoreDataCloudMinimal2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoreDataCloudMinimal2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BC0D24719407D8B00E2142B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		4BC0D24919407D8B00E2142B /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -139,11 +138,10 @@
 				4B4A90171942CEF7005ADA9B /* Main_iPhone.storyboard */,
 				4BC0D25F19407D8B00E2142B /* DCViewController.h */,
 				4BC0D26019407D8B00E2142B /* DCViewController.m */,
-				4B2358601945F3BA0044C599 /* DCPersistentStorageType.h */,
 				4BC0D27F1940820900E2142B /* DCDataTableViewController.h */,
 				4BC0D2801940820900E2142B /* DCDataTableViewController.m */,
-				4B4A90211942D06A005ADA9B /* DCDataManager.h */,
-				4B4A90221942D06A005ADA9B /* DCDataManager.m */,
+				4B4A90211942D06A005ADA9B /* DCCoreDataManager.h */,
+				4B4A90221942D06A005ADA9B /* DCCoreDataManager.m */,
 				4B4053D41943745700892360 /* DCUserDefaults.h */,
 				4B4053D51943745700892360 /* DCUserDefaults.m */,
 				4BDA27D01945C3B600E475F3 /* DCSharedServices.h */,
@@ -302,7 +300,7 @@
 				4B4053D91943977600892360 /* DCData.m in Sources */,
 				4BC0D2811940820900E2142B /* DCDataTableViewController.m in Sources */,
 				4BC0D25819407D8B00E2142B /* DCAppDelegate.m in Sources */,
-				4B4A90231942D06A005ADA9B /* DCDataManager.m in Sources */,
+				4B4A90231942D06A005ADA9B /* DCCoreDataManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

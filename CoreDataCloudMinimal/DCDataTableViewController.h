@@ -8,8 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@class DCDataManager;
+@class DCCoreDataManager;
 
 @interface DCDataTableViewController : UITableViewController
-@property (strong, nonatomic) DCDataManager *dataManager;
+@property (strong, nonatomic) DCCoreDataManager *dataManager;
 @end

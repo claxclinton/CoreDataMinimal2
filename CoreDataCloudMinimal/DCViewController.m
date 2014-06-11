@@ -8,17 +8,17 @@
 
 #import "DCViewController.h"
 #import "DCSharedServices.h"
-#import "DCDataManager.h"
+#import "DCCoreDataManager.h"
 #import "DCUserDefaults.h"
 #import "DCDataTableViewController.h"
 
-@interface DCViewController () <DCDataManagerDelegate>
+@interface DCViewController () <DCCoreDataManagerDelegate>
 @property (strong, nonatomic) IBOutlet UISegmentedControl *cloudAccessStatusSegmentedControl;
 @property (strong, nonatomic) IBOutlet UISegmentedControl *persistentStoreStatusSegmentedControl;
 @property (strong, nonatomic) IBOutlet UISegmentedControl *launchStateStatusSegmentedControl;
 @property (strong, nonatomic) IBOutlet UISegmentedControl *persistentStoreSegmentedControl;
 @property (strong, nonatomic) IBOutlet UIButton *accessDataButton;
-@property (strong, nonatomic) DCDataManager *dataManager;
+@property (strong, nonatomic) DCCoreDataManager *coreDataManager;
 @property (assign, nonatomic) DCPersistentStorageType persistentStorageType;
 @property (strong, nonatomic) NSDictionary *persistentStorageTypeDescription;
 @property (strong, nonatomic) DCSharedServices *sharedServices;
@@ -30,7 +30,7 @@
 {
     [super viewDidLoad];
     self.sharedServices = [DCSharedServices sharedServices];
-    self.dataManager = [DCDataManager dataManagerWithModelName:@"Model" delegate:self];
+    self.coreDataManager = [DCCoreDataManager dataManagerWithModelName:@"Model" delegate:self];
     self.persistentStorageTypeDescription = @{@(DCPersistentStorageTypeNone): @"No Persistent Store",
                                               @(DCPersistentStorageTypeLocal): @"Local Persistent Store",
                                               @(DCPersistentStorageTypeCloud): @"Cloud Persistent Store"};
@@ -51,7 +51,7 @@
         UINavigationController *navigationController = (UINavigationController *)viewController;
         UIViewController *topViewController = [navigationController topViewController];
         DCDataTableViewController *dataTableViewController = (DCDataTableViewController *)topViewController;
-        dataTableViewController.dataManager = self.dataManager;
+        dataTableViewController.dataManager = self.coreDataManager;
     }
 }
 
@@ -69,41 +69,7 @@
     [self performSegueWithIdentifier:@"accessData" sender:self];
 }
 
-#pragma mark - Storage Change Method
-
-#pragma mark - Data Manager
-- (void)dataManagerDelegate:(DCDataManager *)dataManager
-         shouldLockInterace:(BOOL)lockInterface
-{
-    NSLog(@"CLLI: %s lockInterface:%@", __PRETTY_FUNCTION__, (lockInterface) ? @"YES" : @"NO");
-}
-
-- (void)dataManagerDelegate:(DCDataManager *)dataManager
-          accessDataAllowed:(BOOL)accessDataAllowed
-{
-    NSLog(@"CLLI: %s accessDataAllowed:%@", __PRETTY_FUNCTION__, (accessDataAllowed) ? @"YES" : @"NO");
-}
-
-- (void)dataManagerDelegate:(DCDataManager *)dataManager
-               shouldReload:(BOOL)shouldReload
-{
-    NSLog(@"CLLI: %s shouldReload:%@", __PRETTY_FUNCTION__, (shouldReload) ? @"YES" : @"NO");
-}
-
-- (void)dataManagerDelegate:(DCDataManager *)dataManager
-     didChangeToStorageType:(DCPersistentStorageType)storageType
-{
-    self.persistentStorageType = storageType;
-}
-
-- (void)dataManagerDelegate:(DCDataManager *)dataManager
- didChangeUbiquityTokenFrom:(id)fromToken
-            toUbiquityToken:(id)toToken
-{
-    NSLog(@"CLLI: %s from:\"%@\" to:\"%@\"", __PRETTY_FUNCTION__, fromToken, toToken);
-    NSInteger selectedSegmentIndex = (toToken == nil) ? 0 : 1;
-    [self.cloudAccessStatusSegmentedControl setSelectedSegmentIndex:selectedSegmentIndex];
-}
+#pragma mark - Data Manager Delegate
 
 #pragma mark - UI Setup Methods
 - (void)setupCloudAccessStatusSegmentedControl

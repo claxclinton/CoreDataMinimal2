@@ -7,7 +7,7 @@
 //
 
 #import "DCDataTableViewController.h"
-#import "DCDataManager.h"
+#import "DCCoreDataManager.h"
 #import "DCData.h"
 
 @interface DCDataTableViewController ()
