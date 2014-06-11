@@ -187,8 +187,11 @@ requestStorageTypeBlock:(void (^)(DCStorageType selectedStorageType))block
 
 - (void)setDataAccessAllowed:(BOOL)dataAccessAllowed
 {
-    _dataAccessAllowed = dataAccessAllowed;
-    [self configureAccessDataButton];
+    if (_dataAccessAllowed != dataAccessAllowed) {
+        NSLog(@"CLLI: App Access: %@.", (dataAccessAllowed) ? @"YES" : @"NO");
+        _dataAccessAllowed = dataAccessAllowed;
+        [self configureAccessDataButton];
+    }
 }
 
 #pragma mark - Ubiquity Identity Manager Delegate - Only for Testing!

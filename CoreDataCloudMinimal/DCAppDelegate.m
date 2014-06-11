@@ -15,25 +15,6 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
-    NSOperationQueue *mainQueue = [NSOperationQueue mainQueue];
-    [notificationCenter addObserverForName:NSPersistentStoreCoordinatorStoresWillChangeNotification
-                                    object:nil queue:mainQueue usingBlock:^(NSNotification *note) {
-                                        NSLog(@"CLLI: App Delegate: NSPersistentStoreCoordinatorStoresWillChangeNotification");
-                                    }];
-    [notificationCenter addObserverForName:NSPersistentStoreCoordinatorStoresDidChangeNotification
-                                    object:nil queue:mainQueue usingBlock:^(NSNotification *note) {
-                                        NSLog(@"CLLI: App Delegate: NSPersistentStoreCoordinatorStoresDidChangeNotification");
-                                    }];
-    [notificationCenter addObserverForName:NSPersistentStoreDidImportUbiquitousContentChangesNotification
-                                    object:nil queue:mainQueue usingBlock:^(NSNotification *note) {
-                                        NSLog(@"CLLI: App Delegate: NSPersistentStoreDidImportUbiquitousContentChangesNotification");
-                                    }];
-    [notificationCenter addObserverForName:NSUbiquityIdentityDidChangeNotification object:nil
-                                     queue:mainQueue usingBlock:^(NSNotification *note) {
-                                         NSLog(@"CLLI: App Delegate: NSUbiquityIdentityDidChangeNotification");
-                                     }];
-    
     return YES;
 }
 

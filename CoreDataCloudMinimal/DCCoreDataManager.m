@@ -136,7 +136,6 @@ static NSString * const DCStoreNameCloud = @"Data-Cloud.sqlite";
     } else {
         [self addCloudStore];
     }
-    [self registerForAllEventsWithPersistentStoreCoordinator:self.persistentStoreCoordinator];
     [self.delegate coreDataManager:self didAddStorageType:storageType];
     [self setDataAccessAllowed:YES updateDelegateIfChange:YES updateDelegateForced:NO];
 }
@@ -283,7 +282,8 @@ didReceiveContentImportNotification:(NSNotification *)notification
                                   initWithManagedObjectModel:self.managedObjectModel];
     
     // Register for notifications for ubiquity identity and storage.
-    
+    [self unregisterForAllEvents];
+    [self registerForAllEventsWithPersistentStoreCoordinator:persistentStoreCoordinator];
     
     // Create coordinator with persistent store.
     NSDictionary *options = [self localPersistentStoreCoordinatorOptions];
@@ -317,7 +317,11 @@ didReceiveContentImportNotification:(NSNotification *)notification
     // Create coordinator with managed object model.
     persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc]
                                   initWithManagedObjectModel:self.managedObjectModel];
-    
+
+    // Register for notifications for ubiquity identity and storage.
+    [self unregisterForAllEvents];
+    [self registerForAllEventsWithPersistentStoreCoordinator:persistentStoreCoordinator];
+
     // Create coordinator with persistent store.
     NSDictionary *options = [self cloudPersistentStoreCoordinatorOptions];
     
