@@ -7,11 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "DCUserDefaults.h"
+
+@class DCUserDefaults;
+@class DCUbiquityIdentityManager;
 
 @interface DCSharedServices : NSObject
 @property (strong, nonatomic) NSBundle *mainBundle;
 @property (strong, nonatomic) DCUserDefaults *userDefaults;
+@property (strong, nonatomic) DCUbiquityIdentityManager *ubiquityIdentityManager;
 @property (readonly, nonatomic) BOOL persistentStore;
 
 + (instancetype)sharedServicesWithPersistentStore:(BOOL)persistentStore;

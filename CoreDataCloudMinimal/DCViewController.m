@@ -31,9 +31,9 @@
     [super viewDidLoad];
     self.sharedServices = [DCSharedServices sharedServices];
     self.coreDataManager = [DCCoreDataManager dataManagerWithModelName:@"Model" delegate:self];
-    self.persistentStorageTypeDescription = @{@(DCPersistentStorageTypeNone): @"No Persistent Store",
-                                              @(DCPersistentStorageTypeLocal): @"Local Persistent Store",
-                                              @(DCPersistentStorageTypeCloud): @"Cloud Persistent Store"};
+    self.persistentStorageTypeDescription = @{@(DCStorageTypeNone): @"No Persistent Store",
+                                              @(DCStorageTypeLocal): @"Local Persistent Store",
+                                              @(DCStorageTypeCloud): @"Cloud Persistent Store"};
     self.userDefaults = self.sharedServices.userDefaults;
     [self setupCloudAccessStatusSegmentedControl];
     [self setupPersistentStoreStatusSegmentedControl];

@@ -8,6 +8,7 @@
 
 #import "DCSharedServices.h"
 #import "DCUserDefaults.h"
+#import "DCUbiquityIdentityManager.h"
 
 static DCSharedServices *DCSingleton = nil;
 static dispatch_once_t DCServicesCreatedOnceToken;
@@ -17,8 +18,6 @@ static dispatch_once_t DCServicesCreatedOnceToken;
 @end
 
 @implementation DCSharedServices
-@synthesize userDefaults = _userDefaults;
-
 + (instancetype)sharedServicesWithPersistentStore:(BOOL)persistentStore
 {
     dispatch_once(&DCServicesCreatedOnceToken, ^{
@@ -47,6 +46,14 @@ static dispatch_once_t DCServicesCreatedOnceToken;
     return self;
 }
 
+- (NSBundle *)mainBundle
+{
+    if (_mainBundle == nil) {
+        _mainBundle = [NSBundle mainBundle];
+    }
+    return _mainBundle;
+}
+
 - (DCUserDefaults *)userDefaults
 {
     if (_userDefaults == nil) {
@@ -55,11 +62,11 @@ static dispatch_once_t DCServicesCreatedOnceToken;
     return _userDefaults;
 }
 
-- (NSBundle *)mainBundle
+- (DCUbiquityIdentityManager *)ubiquityIdentityManager
 {
-    if (_mainBundle == nil) {
-        _mainBundle = [NSBundle mainBundle];
+    if (_ubiquityIdentityManager == nil) {
+        _ubiquityIdentityManager = [DCUbiquityIdentityManager ubiquityIdentityManager];
     }
-    return _mainBundle;
+    return _ubiquityIdentityManager;
 }
 @end
