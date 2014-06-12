@@ -79,15 +79,15 @@ DCStorageChangeEventsManagerDelegate>
 - (void)addPersistentStore
 {
     [self setDataAccessAllowed:NO updateDelegateIfChange:YES updateDelegateForced:NO];
-    BOOL shouldAskDelegate = [self shouldAskDelegateForStorageType];
-    if (shouldAskDelegate) {
+    BOOL shouldRequestStorageTypeFromDelegate = [self shouldRequestStorageTypeFromDelegate];
+    if (shouldRequestStorageTypeFromDelegate) {
         __weak typeof(self)weakSelf = self;
         NSUInteger availableStorageTypes = (DCStorageTypeLocal | DCStorageTypeCloud);
         [self.delegate coreDataManager:self didRequestStorageTypeFrom:availableStorageTypes
-                            usingBlock:^(DCStorageType selectedStorageType) {
-                                self.userDefaults.hasAskedForCloudStorage = YES;
-                                [weakSelf addStoreWithStorageType:selectedStorageType];
-                            }];
+               requestStorageTypeBlock:^(DCStorageType selectedStorageType) {
+                   self.userDefaults.hasAskedForCloudStorage = YES;
+                   [weakSelf addStoreWithStorageType:selectedStorageType];
+               }];
     } else {
         DCStorageType nextStorageType = self.userDefaults.storageType;
         if (nextStorageType == DCStorageTypeNone) {
@@ -221,7 +221,6 @@ DCStorageChangeEventsManagerDelegate>
           didChangeFromIdentity:(id <NSObject, NSCopying, NSCoding>)fromIdentity
                      toIdentity:(id <NSObject, NSCopying, NSCoding>)toIdentity
 {
-    NSLog(@"KUKEN!!!!!!!!!!!!!!!!!!!!!!!!");
     [self setDataAccessAllowed:NO updateDelegateIfChange:YES updateDelegateForced:NO];
     switch (self.storageType) {
         case DCStorageTypeNone:
@@ -502,7 +501,7 @@ persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordi
     }
 }
 
-- (BOOL)shouldAskDelegateForStorageType
+- (BOOL)shouldRequestStorageTypeFromDelegate
 {
     BOOL hasCloudAccess = (self.fileManager.ubiquityIdentityToken != nil);
     BOOL hasAskedForCloudStorage = self.userDefaults.hasAskedForCloudStorage;

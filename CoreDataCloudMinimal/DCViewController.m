@@ -28,7 +28,7 @@
 @property (strong, nonatomic) DCUserDefaults *userDefaults;
 @property (strong, nonatomic) DCUbiquityIdentityManager *ubiquityIdentityManager;
 @property (assign, nonatomic) BOOL dataAccessAllowed;
-@property (copy, nonatomic) void (^storageTypeRequestBlock)(DCStorageType type);
+@property (copy,   nonatomic) void (^storageTypeRequestBlock)(DCStorageType type);
 @end
 
 @implementation DCViewController
@@ -82,7 +82,7 @@
 #pragma mark - Core Data Manager Delegate
 - (void)coreDataManager:(DCCoreDataManager *)coreDataManager
 didRequestStorageTypeFrom:(NSUInteger)availableStorageTypes
-             usingBlock:(void (^)(DCStorageType selectedStorageType))block;
+             requestStorageTypeBlock:(void (^)(DCStorageType selectedStorageType))block;
 {
     self.storageTypeRequestBlock = block;
     NSAssert((availableStorageTypes & DCStorageTypeLocal), @"Local storage should always be an option.");
