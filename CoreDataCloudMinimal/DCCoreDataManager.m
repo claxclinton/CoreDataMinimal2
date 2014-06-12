@@ -81,11 +81,11 @@ DCStorageChangeEventsManagerDelegate>
     [self setDataAccessAllowed:NO updateDelegateIfChange:YES updateDelegateForced:NO];
     BOOL shouldAskDelegate = [self shouldAskDelegateForStorageType];
     if (shouldAskDelegate) {
-        self.userDefaults.hasAskedForCloudStorage = YES;
         __weak typeof(self)weakSelf = self;
         NSUInteger availableStorageTypes = (DCStorageTypeLocal | DCStorageTypeCloud);
         [self.delegate coreDataManager:self didRequestStorageTypeFrom:availableStorageTypes
                             usingBlock:^(DCStorageType selectedStorageType) {
+                                self.userDefaults.hasAskedForCloudStorage = YES;
                                 [weakSelf addStoreWithStorageType:selectedStorageType];
                             }];
     } else {
@@ -221,6 +221,7 @@ DCStorageChangeEventsManagerDelegate>
           didChangeFromIdentity:(id <NSObject, NSCopying, NSCoding>)fromIdentity
                      toIdentity:(id <NSObject, NSCopying, NSCoding>)toIdentity
 {
+    NSLog(@"KUKEN!!!!!!!!!!!!!!!!!!!!!!!!");
     [self setDataAccessAllowed:NO updateDelegateIfChange:YES updateDelegateForced:NO];
     switch (self.storageType) {
         case DCStorageTypeNone:
@@ -503,7 +504,7 @@ persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordi
 
 - (BOOL)shouldAskDelegateForStorageType
 {
-    BOOL hasCloudAccess = self.fileManager.ubiquityIdentityToken;
+    BOOL hasCloudAccess = (self.fileManager.ubiquityIdentityToken != nil);
     BOOL hasAskedForCloudStorage = self.userDefaults.hasAskedForCloudStorage;
     BOOL shouldAskDelegate = (hasCloudAccess && !hasAskedForCloudStorage);
     return shouldAskDelegate;

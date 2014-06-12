@@ -116,6 +116,7 @@ didChangeUbiquitousIdentityTo:(id)ubiquitousIdentity
 requestStorageTypeBlock:(void (^)(DCStorageType selectedStorageType))block
 {
     NSAssert((availableStorageTypes & DCStorageTypeLocal), @"Local storage should always be an option.");
+    self.storageTypeBlock = block;
     UIAlertView *alertView;
     BOOL cloudStorageTypeAvailable = (availableStorageTypes & DCStorageTypeCloud);
     if (cloudStorageTypeAvailable) {
