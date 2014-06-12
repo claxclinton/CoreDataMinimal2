@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # CocoaPods
 #
 # We recommend against adding the Pods directory to your .gitignore. However
@@ -6,3 +7,7 @@
 #
 # Pods/
 
+=======
+CoreDataCloudMinimal2.xcodeproj/project.xcworkspace/xcuserdata/clli.xcuserdatad/WorkspaceSettings.xcsettings
+CoreDataCloudMinimal2.xcodeproj/xcuserdata/clli.xcuserdatad/xcdebugger/Breakpoints_v2.xcbkptlist
+>>>>>>> Documentation.
