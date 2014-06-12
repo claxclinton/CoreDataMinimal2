@@ -28,7 +28,7 @@
 @property (strong, nonatomic) DCUserDefaults *userDefaults;
 @property (strong, nonatomic) DCUbiquityIdentityManager *ubiquityIdentityManager;
 @property (assign, nonatomic) BOOL dataAccessAllowed;
-@property (copy, nonatomic) void (^storageTypeBlock)(DCStorageType type);
+@property (copy, nonatomic) void (^storageTypeRequestBlock)(DCStorageType type);
 @end
 
 @implementation DCViewController
@@ -84,7 +84,7 @@
 didRequestStorageTypeFrom:(NSUInteger)availableStorageTypes
              usingBlock:(void (^)(DCStorageType selectedStorageType))block;
 {
-    self.storageTypeBlock = block;
+    self.storageTypeRequestBlock = block;
     NSAssert((availableStorageTypes & DCStorageTypeLocal), @"Local storage should always be an option.");
     NSAssert((availableStorageTypes & DCStorageTypeCloud), @"Cloud storage is the reason for asking.");
     UIAlertView *alertView;
@@ -116,7 +116,7 @@ didChangeUbiquitousIdentityTo:(id)ubiquitousIdentity
 requestStorageTypeBlock:(void (^)(DCStorageType selectedStorageType))block
 {
     NSAssert((availableStorageTypes & DCStorageTypeLocal), @"Local storage should always be an option.");
-    self.storageTypeBlock = block;
+    self.storageTypeRequestBlock = block;
     UIAlertView *alertView;
     BOOL cloudStorageTypeAvailable = (availableStorageTypes & DCStorageTypeCloud);
     if (cloudStorageTypeAvailable) {
@@ -142,12 +142,12 @@ requestStorageTypeBlock:(void (^)(DCStorageType selectedStorageType))block
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (alertView.numberOfButtons == 1) {
-        self.storageTypeBlock(DCStorageTypeLocal);
+        self.storageTypeRequestBlock(DCStorageTypeLocal);
     } else {
         if (buttonIndex == 0) {
-            self.storageTypeBlock(DCStorageTypeLocal);
+            self.storageTypeRequestBlock(DCStorageTypeLocal);
         } else {
-            self.storageTypeBlock(DCStorageTypeCloud);
+            self.storageTypeRequestBlock(DCStorageTypeCloud);
         }
         [self configureCloudQuestionStatusSegmentedControl];
     }
